@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-night: #121212;
+  --color-surface: #1C1C1C;
+  --color-border: #2A2A2A;
+  --color-amber: #E8A33D;
+  --color-cream: #ECECEC;
+  --color-muted: #8C8C8C;
+
+  --font-display: "Fraunces", serif;
+  --font-sans: "IBM Plex Sans", sans-serif;
+  --font-mono: "Space Mono", monospace;
+
+  --radius-card: 8px;
+}
+
+@layer components {
+  .sprocket {
+    height: 8px;
+    background-image: radial-gradient(circle, var(--color-border) 1.5px, transparent 1.5px);
+    background-size: 16px 100%;
+    background-repeat: repeat-x;
+  }
+}
