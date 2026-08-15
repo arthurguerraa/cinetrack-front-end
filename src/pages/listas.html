@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minhas listas · CineTrack</title>
+<link rel="stylesheet" href="../../assets/css/output.css">
+
+<!-- api.js e auth.js carregados no head para proteger a página ANTES do conteúdo aparecer -->
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+  // roda imediatamente, antes do body renderizar — evita o "flash" da página
+  // para quem não está logado
+  Auth.protegerPagina();
+</script>
+</head>
+<body class="bg-night text-cream font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-border">
+    <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="../../index.html" class="font-display text-2xl font-semibold tracking-wide">CineTrack</a>
+
+      <nav class="flex items-center gap-6 text-sm">
+        <a href="./ranking.html" class="text-muted hover:text-cream transition-colors">Ranking</a>
+
+        <div id="header-logado" class="hidden items-center gap-4">
+          <a href="./listas.html" class="text-amber">Minhas listas</a>
+          <span class="text-muted">·</span>
+          <span class="text-cream" id="header-nome-usuario"></span>
+          <button id="header-btn-logout" class="text-muted hover:text-amber transition-colors text-xs border border-border rounded-card px-3 py-1.5">
+            Sair
+          </button>
+        </div>
+
+        <div id="header-deslogado" class="hidden items-center gap-3">
+          <a href="./login.html" class="text-muted hover:text-cream transition-colors">Entrar</a>
+          <a href="./cadastro.html" class="bg-amber text-night font-semibold text-xs rounded-card px-3 py-2 hover:brightness-110 transition-all">
+            Cadastre-se
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-6 py-10">
+
+    <div class="flex items-end justify-between mb-6">
+      <div>
+        <h1 class="font-display text-3xl font-semibold mb-1">Minhas listas</h1>
+        <p class="text-muted text-sm">Organize os filmes do seu jeito.</p>
+      </div>
+
+      <button
+        id="btn-nova-lista"
+        class="bg-amber text-night font-semibold text-sm rounded-card px-4 py-2.5 hover:brightness-110 active:scale-[0.98] transition-all"
+      >
+        + Nova lista
+      </button>
+    </div>
+
+    <div class="sprocket mb-8 opacity-60"></div>
+
+    <p id="estado-carregando" class="hidden text-muted text-sm text-center py-10">Carregando suas listas...</p>
+
+    <p id="estado-vazio" class="hidden text-muted text-sm text-center py-10">
+      Você ainda não criou nenhuma lista. Que tal começar agora?
+    </p>
+
+    <p id="estado-erro" class="hidden text-red-400 text-sm text-center py-10"></p>
+
+    <div id="grid-listas" class="grid sm:grid-cols-2 gap-4"></div>
+
+  </main>
+
+  <!-- Template de card de lista -->
+  <template id="template-card-lista">
+    <article class="card-lista bg-surface border border-border rounded-card px-5 py-4 flex flex-col">
+      <div class="flex items-start justify-between mb-2">
+        <h3 class="titulo font-display text-base font-semibold"></h3>
+        <span class="badge-visibilidade text-[10px] font-mono uppercase tracking-wide rounded-sm px-2 py-1 shrink-0 ml-2"></span>
+      </div>
+
+      <p class="descricao text-muted text-sm mb-4 flex-1"></p>
+
+      <div class="flex items-center gap-2 pt-3 border-t border-border">
+        <button class="btn-ver flex-1 text-xs font-semibold border border-border rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
+          Ver filmes
+        </button>
+        <button class="btn-editar text-xs font-semibold border border-border rounded-card px-3 py-2 hover:border-amber hover:text-amber transition-colors">
+          Editar
+        </button>
+        <button class="btn-deletar text-xs font-semibold border border-border rounded-card px-3 py-2 text-red-400 hover:border-red-400 transition-colors">
+          Excluir
+        </button>
+      </div>
+    </article>
+  </template>
+
+  <!-- Template de filme dentro da visualização de uma lista -->
+  <template id="template-filme-lista">
+    <div class="filme-item flex items-center gap-3 bg-night border border-border rounded-card px-3 py-2">
+      <div class="poster w-10 h-[60px] rounded-sm bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center shrink-0"></div>
+      <div class="min-w-0">
+        <p class="titulo text-sm font-medium truncate"></p>
+        <p class="ano text-muted text-xs font-mono"></p>
+      </div>
+    </div>
+  </template>
+
+  <!-- Modal: criar / editar lista -->
+  <div id="modal-lista" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm">
+
+      <div class="flex items-start justify-between mb-4">
+        <h3 id="modal-lista-titulo" class="font-display text-lg font-semibold">Nova lista</h3>
+        <button id="modal-lista-fechar" class="text-muted hover:text-cream text-xl leading-none">&times;</button>
+      </div>
+
+      <form id="form-lista" class="space-y-4" novalidate>
+        <input type="hidden" id="lista-id">
+
+        <div>
+          <label for="lista-nome" class="block text-xs text-muted mb-1.5 font-medium">Nome</label>
+          <input
+            type="text"
+            id="lista-nome"
+            required
+            placeholder="Ex: Favoritos de 2024"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
+          >
+        </div>
+
+        <div>
+          <label for="lista-descricao" class="block text-xs text-muted mb-1.5 font-medium">Descrição (opcional)</label>
+          <textarea
+            id="lista-descricao"
+            rows="2"
+            placeholder="Do que se trata essa lista?"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors resize-none"
+          ></textarea>
+        </div>
+
+        <label class="flex items-center gap-2 text-sm text-cream cursor-pointer">
+          <input type="checkbox" id="lista-visibilidade" checked class="accent-amber w-4 h-4">
+          Tornar essa lista pública
+        </label>
+
+        <p id="modal-lista-erro" class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+
+        <button
+          type="submit"
+          id="modal-lista-btn-salvar"
+          class="w-full bg-amber text-night font-semibold text-sm rounded-card py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          Salvar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: ver filmes da lista -->
+  <div id="modal-filmes" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-md max-h-[80vh] flex flex-col">
+
+      <div class="flex items-start justify-between mb-4 shrink-0">
+        <h3 id="modal-filmes-titulo" class="font-display text-lg font-semibold"></h3>
+        <button id="modal-filmes-fechar" class="text-muted hover:text-cream text-xl leading-none">&times;</button>
+      </div>
+
+      <p id="modal-filmes-vazio" class="hidden text-muted text-sm py-6 text-center">
+        Essa lista ainda não tem filmes. Busca um título pra adicionar.
+      </p>
+
+      <div id="modal-filmes-lista" class="space-y-2 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- Modal: confirmação de exclusão -->
+  <div id="modal-confirmar" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-xs text-center">
+      <p class="text-sm text-cream mb-5">Tem certeza que deseja excluir essa lista? Essa ação não pode ser desfeita.</p>
+      <div class="flex gap-3">
+        <button id="modal-confirmar-cancelar" class="flex-1 text-sm font-semibold border border-border rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
+          Cancelar
+        </button>
+        <button id="modal-confirmar-excluir" class="flex-1 text-sm font-semibold bg-red-500 text-night rounded-card py-2 hover:brightness-110 transition-all">
+          Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+
+<script src="../js/main.js"></script>
+<script src="../js/pages/listas.js"></script>
+
+</body>
+</html>
