@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ranking · CineTrack</title>
+<link rel="stylesheet" href="../../assets/css/output.css">
+</head>
+<body class="bg-night text-cream font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-border">
+    <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="../../index.html" class="font-display text-2xl font-semibold tracking-wide">CineTrack</a>
+
+      <nav class="flex items-center gap-6 text-sm">
+        <a href="./ranking.html" class="text-amber">Ranking</a>
+
+        <!-- estado logado -->
+        <div id="header-logado" class="hidden items-center gap-4">
+          <a href="./listas.html" class="text-muted hover:text-cream transition-colors">Minhas listas</a>
+          <span class="text-muted">·</span>
+          <span class="text-cream" id="header-nome-usuario"></span>
+          <button id="header-btn-logout" class="text-muted hover:text-amber transition-colors text-xs border border-border rounded-card px-3 py-1.5">
+            Sair
+          </button>
+        </div>
+
+        <!-- estado deslogado -->
+        <div id="header-deslogado" class="hidden items-center gap-3">
+          <a href="./login.html" class="text-muted hover:text-cream transition-colors">Entrar</a>
+          <a href="./cadastro.html" class="bg-amber text-night font-semibold text-xs rounded-card px-3 py-2 hover:brightness-110 transition-all">
+            Cadastre-se
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-6 py-10">
+
+    <div class="flex items-end justify-between mb-6">
+      <div>
+        <h1 class="font-display text-3xl font-semibold mb-1">Ranking</h1>
+        <p class="text-muted text-sm">Os filmes mais bem avaliados pela comunidade.</p>
+      </div>
+
+      <select
+        id="seletor-limite"
+        class="bg-surface border border-border rounded-card px-3 py-2 text-sm text-cream focus:outline-none focus:border-amber"
+      >
+        <option value="10">Top 10</option>
+        <option value="20">Top 20</option>
+        <option value="50">Top 50</option>
+      </select>
+    </div>
+
+    <div class="sprocket mb-8 opacity-60"></div>
+
+    <!-- Estado de carregamento -->
+    <p id="estado-carregando" class="hidden text-muted text-sm text-center py-10">Carregando ranking...</p>
+
+    <!-- Estado vazio -->
+    <p id="estado-vazio" class="hidden text-muted text-sm text-center py-10">
+      Ainda não há filmes avaliados o suficiente para montar um ranking.
+    </p>
+
+    <!-- Estado de erro -->
+    <p id="estado-erro" class="hidden text-red-400 text-sm text-center py-10"></p>
+
+    <!-- Lista do ranking -->
+    <ol id="lista-ranking" class="space-y-3"></ol>
+
+  </main>
+
+  <!-- Template de item do ranking (usado via JS) -->
+  <template id="template-item-ranking">
+    <li class="item-ranking bg-surface border border-border rounded-card flex items-center gap-4 px-4 py-3">
+      <span class="posicao font-mono text-lg text-muted w-10 text-center shrink-0"></span>
+
+      <div class="poster w-12 h-[72px] rounded-sm bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center shrink-0"></div>
+
+      <div class="flex-1 min-w-0">
+        <h3 class="titulo font-display text-sm font-semibold truncate"></h3>
+        <p class="ano text-muted text-xs font-mono"></p>
+      </div>
+
+      <div class="text-right shrink-0">
+        <p class="nota font-mono text-amber text-base"></p>
+        <p class="total-avaliacoes text-muted text-[11px]"></p>
+      </div>
+    </li>
+  </template>
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/pages/ranking.js"></script>
+
+</body>
+</html>
