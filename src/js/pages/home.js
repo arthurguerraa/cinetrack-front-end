@@ -16,7 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const estadoErro = document.getElementById('estado-erro');
 
   const templateCard = document.getElementById('template-card-filme');
+  const templateOpcaoLista = document.getElementById('template-opcao-lista');
 
+  // modal de avaliação
   const modal = document.getElementById('modal-avaliar');
   const modalFechar = document.getElementById('modal-fechar');
   const modalTituloFilme = document.getElementById('modal-titulo-filme');
@@ -27,10 +29,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalErro = document.getElementById('modal-erro');
   const modalBtnSalvar = document.getElementById('modal-btn-salvar');
 
+  // modal de adicionar à lista
+  const modalListas = document.getElementById('modal-listas');
+  const modalListasFechar = document.getElementById('modal-listas-fechar');
+  const modalListasTituloFilme = document.getElementById('modal-listas-titulo-filme');
+  const modalListasCarregando = document.getElementById('modal-listas-carregando');
+  const modalListasVazio = document.getElementById('modal-listas-vazio');
+  const modalListasErro = document.getElementById('modal-listas-erro');
+  const modalListasSucesso = document.getElementById('modal-listas-sucesso');
+  const modalListasOpcoes = document.getElementById('modal-listas-opcoes');
+
   let generoSelecionado = null;
 
   // ----------------------------------------
-  // Estados de exibição
+  // Estados de exibição do grid principal
   // ----------------------------------------
   function limparEstados() {
     gridFilmes.innerHTML = '';
@@ -82,8 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
       card.querySelector('.nota').textContent = `★ ${formatarNota(nota)}`;
       card.querySelector('.ano').textContent = formatarAno(ano);
 
-      const btnAvaliar = card.querySelector('.btn-avaliar');
-      btnAvaliar.addEventListener('click', () => abrirModalAvaliar(id, titulo));
+      card.querySelector('.btn-avaliar').addEventListener('click', () => abrirModalAvaliar(id, titulo));
+      card.querySelector('.btn-add-lista').addEventListener('click', () => abrirModalListas(id, titulo));
 
       gridFilmes.appendChild(card);
     });
@@ -124,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const termo = campoBusca.value.trim();
     if (!termo) return;
 
-    // busca por termo ignora o filtro de gênero ativo, já que consulta o TMDB direto
     generoSelecionado = null;
     atualizarPillsGenero();
     buscarFilmes(termo);
@@ -159,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       atualizarPillsGenero();
     } catch (err) {
-      // filtro de gênero é um extra — se falhar, a home continua funcionando sem ele
       console.error('Não foi possível carregar os gêneros.', err);
     }
   }
@@ -206,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   modalFechar.addEventListener('click', fecharModal);
   modal.addEventListener('click', (evento) => {
-    if (evento.target === modal) fecharModal(); // clicou fora do card
+    if (evento.target === modal) fecharModal();
   });
 
   formAvaliar.addEventListener('submit', async (evento) => {
@@ -234,6 +244,70 @@ document.addEventListener('DOMContentLoaded', () => {
       modalBtnSalvar.disabled = false;
       modalBtnSalvar.textContent = 'Salvar avaliação';
     }
+  });
+
+  // ----------------------------------------
+  // Modal de adicionar à lista
+  // ----------------------------------------
+  async function abrirModalListas(idFilme, titulo) {
+    if (!Auth.estaLogado()) {
+      window.location.href = './src/pages/login.html';
+      return;
+    }
+
+    modalListasTituloFilme.textContent = titulo;
+    modalListasOpcoes.innerHTML = '';
+    modalListasVazio.classList.add('hidden');
+    limparErro(modalListasErro);
+    limparErro(modalListasSucesso);
+    modalListasCarregando.classList.remove('hidden');
+
+    modalListas.classList.remove('hidden');
+    modalListas.classList.add('flex');
+
+    try {
+      const listas = await ListasAPI.listarMinhas();
+      modalListasCarregando.classList.add('hidden');
+
+      if (!listas || listas.length === 0) {
+        modalListasVazio.classList.remove('hidden');
+        return;
+      }
+
+      listas.forEach((lista) => {
+        const opcao = templateOpcaoLista.content.cloneNode(true);
+        opcao.querySelector('.nome').textContent = lista.nm_lista;
+        opcao.querySelector('.opcao-lista').addEventListener('click', () =>
+          adicionarFilmeNaLista(lista.id_lista, idFilme)
+        );
+        modalListasOpcoes.appendChild(opcao);
+      });
+    } catch (err) {
+      modalListasCarregando.classList.add('hidden');
+      exibirErro(modalListasErro, err.message);
+    }
+  }
+
+  async function adicionarFilmeNaLista(idLista, idFilme) {
+    limparErro(modalListasErro);
+    limparErro(modalListasSucesso);
+
+    try {
+      await ListasAPI.adicionarFilme(idLista, idFilme);
+      exibirErro(modalListasSucesso, 'Filme adicionado à lista!');
+    } catch (err) {
+      exibirErro(modalListasErro, err.message);
+    }
+  }
+
+  function fecharModalListas() {
+    modalListas.classList.add('hidden');
+    modalListas.classList.remove('flex');
+  }
+
+  modalListasFechar.addEventListener('click', fecharModalListas);
+  modalListas.addEventListener('click', (evento) => {
+    if (evento.target === modalListas) fecharModalListas();
   });
 
   // ----------------------------------------

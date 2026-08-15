@@ -134,6 +134,34 @@
     </div>
   </div>
 
+  <!-- Modal: adicionar filme a uma lista -->
+  <div id="modal-listas" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm">
+
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <p class="text-muted text-xs mb-1">Adicionar à lista</p>
+          <h3 id="modal-listas-titulo-filme" class="font-display text-lg font-semibold"></h3>
+        </div>
+        <button id="modal-listas-fechar" class="text-muted hover:text-cream text-xl leading-none">&times;</button>
+      </div>
+
+      <p id="modal-listas-carregando" class="hidden text-muted text-sm text-center py-6">Carregando suas listas...</p>
+
+      <p id="modal-listas-vazio" class="hidden text-muted text-sm text-center py-6">
+        Você ainda não tem nenhuma lista.
+        <a href="./src/pages/listas.html" class="text-amber hover:brightness-110 font-medium">Criar uma lista</a>
+      </p>
+
+      <p id="modal-listas-erro" class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2 mb-3"></p>
+
+      <p id="modal-listas-sucesso" class="hidden text-[13px] text-amber bg-amber/10 border border-amber/30 rounded-card px-3 py-2 mb-3"></p>
+
+      <div id="modal-listas-opcoes" class="space-y-2 max-h-64 overflow-y-auto"></div>
+
+    </div>
+  </div>
+
   <!-- Template de card de filme (usado via JS, nunca renderizado direto) -->
   <template id="template-card-filme">
     <article class="bg-surface border border-border rounded-card overflow-hidden flex flex-col">
@@ -144,11 +172,23 @@
           <span class="nota text-amber"></span>
           <span class="ano"></span>
         </div>
-        <button class="btn-avaliar mt-auto w-full border border-border text-cream text-xs font-semibold rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
-          Avaliar
-        </button>
+        <div class="mt-auto flex gap-2">
+          <button class="btn-avaliar flex-1 border border-border text-cream text-xs font-semibold rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
+            Avaliar
+          </button>
+          <button class="btn-add-lista border border-border text-cream text-xs font-semibold rounded-card px-2.5 hover:border-amber hover:text-amber transition-colors" title="Adicionar à lista">
+            +
+          </button>
+        </div>
       </div>
     </article>
+  </template>
+
+  <!-- Template de opção de lista dentro do modal-listas -->
+  <template id="template-opcao-lista">
+    <button class="opcao-lista w-full text-left bg-night border border-border rounded-card px-4 py-3 hover:border-amber transition-colors">
+      <span class="nome text-sm font-medium block"></span>
+    </button>
   </template>
 
 <script src="./src/js/api.js"></script>
