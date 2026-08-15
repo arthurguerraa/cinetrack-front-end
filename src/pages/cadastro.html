@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastrar · CineTrack</title>
+<link rel="stylesheet" href="../../assets/css/output.css">
+</head>
+<body class="bg-night text-cream font-sans min-h-screen flex items-center justify-center px-6">
+
+  <div class="w-full max-w-sm">
+
+    <!-- Marca -->
+    <div class="text-center mb-8">
+      <h1 class="font-display text-4xl font-semibold text-cream tracking-wide">CineTrack</h1>
+      <p class="text-muted text-sm mt-1">Sua central de avaliações de filmes</p>
+    </div>
+
+    <!-- Trilha de sprocket — assinatura visual -->
+    <div class="sprocket mb-8 opacity-60"></div>
+
+    <!-- Card de cadastro -->
+    <div class="bg-surface border border-border rounded-card px-7 py-8">
+
+      <h2 class="font-display text-xl font-semibold mb-1">Garanta sua entrada</h2>
+      <p class="text-muted text-sm mb-6">Crie sua conta para avaliar filmes e montar listas.</p>
+
+      <form id="form-cadastro" class="space-y-4" novalidate>
+
+        <div>
+          <label for="nome" class="block text-xs text-muted mb-1.5 font-medium">Nome</label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            placeholder="Seu nome"
+            required
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
+          >
+          <p id="erro-nome" class="hidden text-[13px] text-red-400 mt-1.5"></p>
+        </div>
+
+        <div>
+          <label for="email" class="block text-xs text-muted mb-1.5 font-medium">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="nome@email.com"
+            required
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
+          >
+          <p id="erro-email" class="hidden text-[13px] text-red-400 mt-1.5"></p>
+        </div>
+
+        <div>
+          <label for="senha" class="block text-xs text-muted mb-1.5 font-medium">Senha</label>
+          <input
+            type="password"
+            id="senha"
+            name="senha"
+            placeholder="Crie uma senha"
+            required
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
+          >
+          <p id="erro-senha" class="hidden text-[13px] text-red-400 mt-1.5"></p>
+        </div>
+
+        <div>
+          <label for="confirmar-senha" class="block text-xs text-muted mb-1.5 font-medium">Confirmar senha</label>
+          <input
+            type="password"
+            id="confirmar-senha"
+            name="confirmar-senha"
+            placeholder="Repita a senha"
+            required
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
+          >
+          <p id="erro-confirmar-senha" class="hidden text-[13px] text-red-400 mt-1.5"></p>
+        </div>
+
+        <p id="erro-geral" class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+
+        <button
+          type="submit"
+          id="btn-cadastrar"
+          class="w-full bg-amber text-night font-sans font-semibold text-sm rounded-card py-2.5 mt-2 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          Criar conta
+        </button>
+
+      </form>
+
+      <div class="mt-6 pt-6 border-t border-border text-center">
+        <p class="text-muted text-sm">
+          Já tem conta?
+          <a href="login.html" class="text-amber hover:brightness-110 font-medium">Entrar</a>
+        </p>
+      </div>
+
+    </div>
+
+    <div class="sprocket mt-8 opacity-60"></div>
+
+  </div>
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/pages/cadastro.js"></script>
+
+</body>
+</html>

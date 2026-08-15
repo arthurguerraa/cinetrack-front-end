@@ -1,5 +1,5 @@
 // ========================================
-// src/js/paginas/login.js
+// src/js/pages/login.js
 // Lógica da página de login.
 // Depende de api.js e auth.js já carregados antes deste arquivo.
 // ========================================
@@ -19,6 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (Auth.estaLogado()) {
     window.location.href = '../../index.html';
     return;
+  }
+
+  // mostra um aviso se o usuário acabou de se cadastrar (login.html?cadastro=sucesso)
+  const parametros = new URLSearchParams(window.location.search);
+  if (parametros.get('cadastro') === 'sucesso') {
+    const avisoSucesso = document.getElementById('aviso-sucesso');
+    if (avisoSucesso) avisoSucesso.classList.remove('hidden');
   }
 
   form.addEventListener('submit', async (evento) => {
