@@ -83,16 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.querySelector('.ano').textContent = formatarAno(ano);
 
       const btnAvaliar = card.querySelector('.btn-avaliar');
-
-      // filmes vindos da busca no TMDB ainda não têm id_filme local nessa resposta específica
-      // (a rota /filmes/buscar retorna um formato simplificado) — nesse caso desabilita avaliar
-      if (id) {
-        btnAvaliar.addEventListener('click', () => abrirModalAvaliar(id, titulo));
-      } else {
-        btnAvaliar.disabled = true;
-        btnAvaliar.title = 'Busque novamente para habilitar a avaliação.';
-        btnAvaliar.classList.add('opacity-50', 'cursor-not-allowed');
-      }
+      btnAvaliar.addEventListener('click', () => abrirModalAvaliar(id, titulo));
 
       gridFilmes.appendChild(card);
     });
