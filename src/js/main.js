@@ -17,14 +17,17 @@ function montarHeader() {
 
   if (!areaLogado && !areaDeslogado) return; // página não usa esse componente
 
+  const mostrar = (el) => { if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } };
+  const esconder = (el) => { if (el) { el.classList.add('hidden'); el.classList.remove('flex'); } };
+
   if (Auth.estaLogado()) {
     const usuario = Auth.usuarioAtual();
-    if (areaLogado) areaLogado.classList.remove('hidden');
-    if (areaDeslogado) areaDeslogado.classList.add('hidden');
+    mostrar(areaLogado);
+    esconder(areaDeslogado);
     if (nomeUsuarioEl && usuario) nomeUsuarioEl.textContent = usuario.nm_usuario;
   } else {
-    if (areaLogado) areaLogado.classList.add('hidden');
-    if (areaDeslogado) areaDeslogado.classList.remove('hidden');
+    esconder(areaLogado);
+    mostrar(areaDeslogado);
   }
 
   if (btnLogout) {
@@ -34,7 +37,6 @@ function montarHeader() {
 
 /**
  * Formata o campo dt_lancamento (que no banco é só o ano) para exibição.
- * Mantido como função separada caso o formato mude no futuro.
  */
 function formatarAno(ano) {
   return ano ? String(ano) : 'Ano desconhecido';
@@ -61,7 +63,6 @@ function truncarTexto(texto, limite = 140) {
 
 /**
  * Exibe uma mensagem de erro em um elemento específico da página.
- * Espera um elemento com a classe já preparada para receber texto (ver login.html).
  */
 function exibirErro(elementoOuId, mensagem) {
   const el = typeof elementoOuId === 'string'

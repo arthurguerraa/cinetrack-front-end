@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CineTrack</title>
+<link rel="stylesheet" href="./assets/css/output.css">
+</head>
+<body class="bg-night text-cream font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-border">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="./index.html" class="font-display text-2xl font-semibold tracking-wide">CineTrack</a>
+
+      <nav class="flex items-center gap-6 text-sm">
+        <a href="./src/pages/ranking.html" class="text-muted hover:text-cream transition-colors">Ranking</a>
+
+        <!-- estado logado -->
+        <div id="header-logado" class="hidden items-center gap-4">
+          <a href="./src/pages/listas.html" class="text-muted hover:text-cream transition-colors">Minhas listas</a>
+          <span class="text-muted">·</span>
+          <span class="text-cream" id="header-nome-usuario"></span>
+          <button id="header-btn-logout" class="text-muted hover:text-amber transition-colors text-xs border border-border rounded-card px-3 py-1.5">
+            Sair
+          </button>
+        </div>
+
+        <!-- estado deslogado -->
+        <div id="header-deslogado" class="hidden items-center gap-3">
+          <a href="./src/pages/login.html" class="text-muted hover:text-cream transition-colors">Entrar</a>
+          <a href="./src/pages/cadastro.html" class="bg-amber text-night font-semibold text-xs rounded-card px-3 py-2 hover:brightness-110 transition-all">
+            Cadastre-se
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-10">
+
+    <!-- Busca -->
+    <section class="mb-8">
+      <h1 class="font-display text-3xl font-semibold mb-1">Encontre um filme</h1>
+      <p class="text-muted text-sm mb-6">Busque por título ou filtre por gênero.</p>
+
+      <form id="form-busca" class="flex gap-3" novalidate>
+        <input
+          type="text"
+          id="campo-busca"
+          placeholder="Ex: Batman, Interestelar, Vingadores..."
+          class="flex-1 bg-surface border border-border rounded-card px-4 py-3 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
+        >
+        <button
+          type="submit"
+          id="btn-buscar"
+          class="bg-amber text-night font-semibold text-sm rounded-card px-6 py-3 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          Buscar
+        </button>
+      </form>
+
+      <!-- Filtro de gêneros -->
+      <div id="filtro-generos" class="flex flex-wrap gap-2 mt-4"></div>
+    </section>
+
+    <div class="sprocket mb-8 opacity-60"></div>
+
+    <!-- Estado de carregamento -->
+    <p id="estado-carregando" class="hidden text-muted text-sm text-center py-10">Carregando filmes...</p>
+
+    <!-- Estado vazio -->
+    <p id="estado-vazio" class="hidden text-muted text-sm text-center py-10">
+      A sessão não encontrou nada com esse nome. Tenta outro título.
+    </p>
+
+    <!-- Estado de erro -->
+    <p id="estado-erro" class="hidden text-red-400 text-sm text-center py-10"></p>
+
+    <!-- Grid de filmes -->
+    <section id="grid-filmes" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5"></section>
+
+  </main>
+
+  <!-- Modal de avaliação rápida -->
+  <div id="modal-avaliar" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm">
+
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <p class="text-muted text-xs mb-1">Avaliando</p>
+          <h3 id="modal-titulo-filme" class="font-display text-lg font-semibold"></h3>
+        </div>
+        <button id="modal-fechar" class="text-muted hover:text-cream text-xl leading-none">&times;</button>
+      </div>
+
+      <form id="form-avaliar" class="space-y-4" novalidate>
+        <input type="hidden" id="modal-id-filme">
+
+        <div>
+          <label for="modal-nota" class="block text-xs text-muted mb-1.5 font-medium">Nota (1 a 10)</label>
+          <input
+            type="number"
+            id="modal-nota"
+            min="1"
+            max="10"
+            step="0.5"
+            required
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm font-mono text-cream focus:outline-none focus:border-amber transition-colors"
+          >
+        </div>
+
+        <div>
+          <label for="modal-comentario" class="block text-xs text-muted mb-1.5 font-medium">Comentário (opcional)</label>
+          <textarea
+            id="modal-comentario"
+            rows="3"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors resize-none"
+            placeholder="O que você achou do filme?"
+          ></textarea>
+        </div>
+
+        <p id="modal-erro" class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+
+        <button
+          type="submit"
+          id="modal-btn-salvar"
+          class="w-full bg-amber text-night font-semibold text-sm rounded-card py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          Salvar avaliação
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Template de card de filme (usado via JS, nunca renderizado direto) -->
+  <template id="template-card-filme">
+    <article class="bg-surface border border-border rounded-card overflow-hidden flex flex-col">
+      <div class="poster aspect-[2/3] bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center"></div>
+      <div class="border-t border-dashed border-border px-4 py-3 flex-1 flex flex-col">
+        <h3 class="titulo font-display text-sm font-semibold leading-snug mb-2"></h3>
+        <div class="flex items-center justify-between text-xs font-mono text-muted mb-3">
+          <span class="nota text-amber"></span>
+          <span class="ano"></span>
+        </div>
+        <button class="btn-avaliar mt-auto w-full border border-border text-cream text-xs font-semibold rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
+          Avaliar
+        </button>
+      </div>
+    </article>
+  </template>
+
+<script src="./src/js/api.js"></script>
+<script src="./src/js/auth.js"></script>
+<script src="./src/js/main.js"></script>
+<script src="./src/js/pages/home.js"></script>
+
+</body>
+</html>
