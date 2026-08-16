@@ -15,13 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const erroSenha = document.getElementById('erro-senha');
   const erroGeral = document.getElementById('erro-geral');
 
-  // se o usuário já está logado, não faz sentido ver a tela de login de novo
   if (Auth.estaLogado()) {
     window.location.href = '../../index.html';
     return;
   }
 
-  // mostra um aviso se o usuário acabou de se cadastrar (login.html?cadastro=sucesso)
   const parametros = new URLSearchParams(window.location.search);
   if (parametros.get('cadastro') === 'sucesso') {
     const avisoSucesso = document.getElementById('aviso-sucesso');
@@ -60,6 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
       Auth.salvarSessao(resposta.token);
       window.location.href = '../../index.html';
     } catch (err) {
+      if (err.emailNaoVerificado) {
+        // manda direto para a tela de código, já com o email preenchido
+        window.location.href = `verificar-email.html?email=${encodeURIComponent(email)}`;
+        return;
+      }
       exibirErro(erroGeral, err.message);
     } finally {
       btnEntrar.disabled = false;

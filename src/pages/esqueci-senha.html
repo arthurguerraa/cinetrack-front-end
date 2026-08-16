@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Entrar · CineTrack</title>
+<title>Recuperar senha · CineTrack</title>
 <link rel="stylesheet" href="../../assets/css/output.css">
 </head>
 <body class="bg-night text-cream font-sans min-h-screen flex items-center justify-center px-6">
@@ -17,23 +17,20 @@
 
     <div class="sprocket mb-8 opacity-60"></div>
 
-    <p id="aviso-sucesso" class="hidden text-[13px] text-amber bg-amber/10 border border-amber/30 rounded-card px-3 py-2 mb-4 text-center">
-      Conta criada. Entre com seus dados.
-    </p>
-
     <div class="bg-surface border border-border rounded-card px-7 py-8">
 
-      <h2 class="font-display text-xl font-semibold mb-1">Entrar</h2>
-      <p class="text-muted text-sm mb-6">Acesse suas avaliações e listas.</p>
+      <h2 class="font-display text-xl font-semibold mb-1">Recuperar senha</h2>
+      <p class="text-muted text-sm mb-6">
+        Digite seu email e enviaremos um código para redefinir sua senha.
+      </p>
 
-      <form id="form-login" class="space-y-4" novalidate>
+      <form id="form-esqueci-senha" class="space-y-4" novalidate>
 
         <div>
           <label for="email" class="block text-xs text-muted mb-1.5 font-medium">Email</label>
           <input
             type="email"
             id="email"
-            name="email"
             placeholder="nome@email.com"
             required
             class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
@@ -41,38 +38,22 @@
           <p id="erro-email" class="hidden text-[13px] text-red-400 mt-1.5"></p>
         </div>
 
-        <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <label for="senha" class="block text-xs text-muted font-medium">Senha</label>
-            <a href="esqueci-senha.html" class="text-xs text-amber hover:brightness-110 font-medium">Esqueceu sua senha?</a>
-          </div>
-          <input
-            type="password"
-            id="senha"
-            name="senha"
-            placeholder="Sua senha"
-            required
-            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
-          >
-          <p id="erro-senha" class="hidden text-[13px] text-red-400 mt-1.5"></p>
-        </div>
-
         <p id="erro-geral" class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
 
         <button
           type="submit"
-          id="btn-entrar"
+          id="btn-enviar"
           class="w-full bg-amber text-night font-sans font-semibold text-sm rounded-card py-2.5 mt-2 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          Entrar
+          Enviar código
         </button>
 
       </form>
 
       <div class="mt-6 pt-6 border-t border-border text-center">
         <p class="text-muted text-sm">
-          Ainda não tem conta?
-          <a href="cadastro.html" class="text-amber hover:brightness-110 font-medium">Cadastre-se</a>
+          Lembrou a senha?
+          <a href="login.html" class="text-amber hover:brightness-110 font-medium">Entrar</a>
         </p>
       </div>
 
@@ -85,7 +66,7 @@
 <script src="../js/api.js"></script>
 <script src="../js/auth.js"></script>
 <script src="../js/main.js"></script>
-<script src="../js/pages/login.js"></script>
+<script src="../js/pages/esqueci-senha.js"></script>
 
 </body>
 </html>

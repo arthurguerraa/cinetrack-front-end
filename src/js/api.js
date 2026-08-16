@@ -6,10 +6,6 @@
 
 const API_URL = 'http://localhost:3000';
 
-/**
- * Função base — todas as chamadas à API passam por aqui.
- * Cuida de: montar a URL, anexar o token (se existir), tratar erro padrão.
- */
 async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem('token');
 
@@ -23,16 +19,16 @@ async function apiRequest(endpoint, options = {}) {
   try {
     resposta = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
   } catch (err) {
-    // erro de rede (backend fora do ar, sem conexão, etc.)
     throw new Error('Não foi possível conectar ao servidor. Verifique se a API está rodando.');
   }
 
-  // DELETE bem-sucedido às vezes não retorna corpo — trata isso antes do .json()
   const temCorpo = resposta.status !== 204;
   const dados = temCorpo ? await resposta.json().catch(() => ({})) : {};
 
   if (!resposta.ok) {
-    throw new Error(dados.error || 'Ocorreu um erro na requisição.');
+    const erro = new Error(dados.error || 'Ocorreu um erro na requisição.');
+    Object.assign(erro, dados);
+    throw erro;
   }
 
   return dados;
@@ -52,6 +48,30 @@ const AuthAPI = {
     apiRequest('/auth/cadastrar', {
       method: 'POST',
       body: JSON.stringify({ nm_usuario, ds_email, ds_senha }),
+    }),
+
+  verificarCodigo: (ds_email, codigo) =>
+    apiRequest('/auth/verificar', {
+      method: 'POST',
+      body: JSON.stringify({ ds_email, codigo }),
+    }),
+
+  reenviarCodigo: (ds_email) =>
+    apiRequest('/auth/reenviar-codigo', {
+      method: 'POST',
+      body: JSON.stringify({ ds_email }),
+    }),
+
+  esqueciSenha: (ds_email) =>
+    apiRequest('/auth/esqueci-senha', {
+      method: 'POST',
+      body: JSON.stringify({ ds_email }),
+    }),
+
+  redefinirSenha: (ds_email, codigo, nova_senha) =>
+    apiRequest('/auth/redefinir-senha', {
+      method: 'POST',
+      body: JSON.stringify({ ds_email, codigo, nova_senha }),
     }),
 };
 

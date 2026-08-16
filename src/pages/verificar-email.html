@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verificar email · CineTrack</title>
+<link rel="stylesheet" href="../../assets/css/output.css">
+</head>
+<body class="bg-night text-cream font-sans min-h-screen flex items-center justify-center px-6">
+
+  <div class="w-full max-w-sm">
+
+    <div class="text-center mb-8">
+      <h1 class="font-display text-4xl font-semibold text-cream tracking-wide">CineTrack</h1>
+      <p class="text-muted text-sm mt-1">Sua central de avaliações de filmes</p>
+    </div>
+
+    <div class="sprocket mb-8 opacity-60"></div>
+
+    <div class="bg-surface border border-border rounded-card px-7 py-8">
+
+      <h2 class="font-display text-xl font-semibold mb-1">Confirme seu email</h2>
+      <p class="text-muted text-sm mb-6">
+        Enviamos um código de 6 dígitos para <span id="email-destino" class="text-cream"></span>.
+      </p>
+
+      <form id="form-verificar" class="space-y-4" novalidate>
+
+        <div>
+          <div id="campos-codigo" class="flex justify-between gap-2">
+            <input type="text" inputmode="numeric" maxlength="1" class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+            <input type="text" inputmode="numeric" maxlength="1" class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+            <input type="text" inputmode="numeric" maxlength="1" class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+            <input type="text" inputmode="numeric" maxlength="1" class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+            <input type="text" inputmode="numeric" maxlength="1" class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+            <input type="text" inputmode="numeric" maxlength="1" class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+          </div>
+          <p id="erro-codigo" class="hidden text-[13px] text-red-400 mt-2"></p>
+        </div>
+
+        <p id="erro-geral" class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+        <p id="aviso-reenvio" class="hidden text-[13px] text-amber bg-amber/10 border border-amber/30 rounded-card px-3 py-2"></p>
+
+        <button
+          type="submit"
+          id="btn-verificar"
+          class="w-full bg-amber text-night font-sans font-semibold text-sm rounded-card py-2.5 mt-2 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          Confirmar
+        </button>
+
+      </form>
+
+      <div class="mt-6 pt-6 border-t border-border text-center">
+        <p class="text-muted text-sm">
+          Não recebeu o código?
+          <button id="btn-reenviar" type="button" class="text-amber hover:brightness-110 font-medium">
+            Reenviar
+          </button>
+        </p>
+      </div>
+
+    </div>
+
+    <div class="sprocket mt-8 opacity-60"></div>
+
+  </div>
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/pages/verificar-email.js"></script>
+
+</body>
+</html>

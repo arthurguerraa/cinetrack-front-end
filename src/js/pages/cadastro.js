@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const erroConfirmarSenha = document.getElementById('erro-confirmar-senha');
   const erroGeral = document.getElementById('erro-geral');
 
-  // se o usuário já está logado, não faz sentido ver a tela de cadastro
   if (Auth.estaLogado()) {
     window.location.href = '../../index.html';
     return;
@@ -59,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
       temErro = true;
     }
 
-    // validação de confirmação — só existe no frontend, o backend não recebe esse campo
     if (senha && confirmarSenha && senha !== confirmarSenha) {
       exibirErro(erroConfirmarSenha, 'As senhas não coincidem.');
       temErro = true;
@@ -72,7 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       await AuthAPI.cadastrar(nome, email, senha);
-      window.location.href = 'login.html?cadastro=sucesso';
+      // conta criada, mas ainda não verificada — leva para a tela de código,
+      // passando o email pela URL para não precisar pedir de novo
+      window.location.href = `verificar-email.html?email=${encodeURIComponent(email)}`;
     } catch (err) {
       exibirErro(erroGeral, err.message);
     } finally {
