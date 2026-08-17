@@ -11,7 +11,6 @@
 //   </script>
 // ========================================
 
-// TROCAR pelos seus links reais antes de publicar o projeto
 const LINK_GITHUB = 'https://github.com/arthurguerraa';
 const LINK_LINKEDIN = 'https://www.linkedin.com/in/arthurguerraa/';
 
