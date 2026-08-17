@@ -8,35 +8,8 @@
 </head>
 <body class="bg-night text-cream font-sans min-h-screen">
 
-  <!-- Header -->
-  <header class="border-b border-border">
-    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-      <a href="./index.html" class="font-display text-2xl font-semibold tracking-wide">CineTrack</a>
-
-      <nav class="flex items-center gap-6 text-sm">
-        <a href="./src/pages/ranking.html" class="text-muted hover:text-cream transition-colors">Ranking</a>
-
-        <!-- estado logado -->
-        <div id="header-logado" class="hidden items-center gap-4">
-          <a href="./src/pages/listas.html" class="text-muted hover:text-cream transition-colors">Minhas listas</a>
-          <a href="./src/pages/perfil.html" class="text-muted hover:text-cream transition-colors">Perfil</a>
-          <span class="text-muted">·</span>
-          <span class="text-cream" id="header-nome-usuario"></span>
-          <button id="header-btn-logout" class="text-muted hover:text-amber transition-colors text-xs border border-border rounded-card px-3 py-1.5">
-            Sair
-          </button>
-        </div>
-
-        <!-- estado deslogado -->
-        <div id="header-deslogado" class="hidden items-center gap-3">
-          <a href="./src/pages/login.html" class="text-muted hover:text-cream transition-colors">Entrar</a>
-          <a href="./src/pages/cadastro.html" class="bg-amber text-night font-semibold text-xs rounded-card px-3 py-2 hover:brightness-110 transition-all">
-            Cadastre-se
-          </a>
-        </div>
-      </nav>
-    </div>
-  </header>
+  <!-- Header (renderizado dinamicamente por header.js) -->
+  <header id="header-root" class="border-b border-border"></header>
 
   <main class="max-w-5xl mx-auto px-6 py-10">
 
@@ -194,6 +167,10 @@
 
 <script src="./src/js/api.js"></script>
 <script src="./src/js/auth.js"></script>
+<script src="./src/js/components/header.js"></script>
+<script>
+  renderHeader({ contexto: 'root', paginaAtiva: null, largura: 'wide' });
+</script>
 <script src="./src/js/main.js"></script>
 <script src="./src/js/pages/home.js"></script>
 

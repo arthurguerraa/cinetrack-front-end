@@ -14,33 +14,8 @@
 </head>
 <body class="bg-night text-cream font-sans min-h-screen">
 
-  <!-- Header -->
-  <header class="border-b border-border">
-    <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-      <a href="../../index.html" class="font-display text-2xl font-semibold tracking-wide">CineTrack</a>
-
-      <nav class="flex items-center gap-6 text-sm">
-        <a href="./ranking.html" class="text-muted hover:text-cream transition-colors">Ranking</a>
-
-        <div id="header-logado" class="hidden items-center gap-4">
-          <a href="./listas.html" class="text-muted hover:text-cream transition-colors">Minhas listas</a>
-          <a href="./perfil.html" class="text-amber">Perfil</a>
-          <span class="text-muted">·</span>
-          <span class="text-cream" id="header-nome-usuario"></span>
-          <button id="header-btn-logout" class="text-muted hover:text-amber transition-colors text-xs border border-border rounded-card px-3 py-1.5">
-            Sair
-          </button>
-        </div>
-
-        <div id="header-deslogado" class="hidden items-center gap-3">
-          <a href="./login.html" class="text-muted hover:text-cream transition-colors">Entrar</a>
-          <a href="./cadastro.html" class="bg-amber text-night font-semibold text-xs rounded-card px-3 py-2 hover:brightness-110 transition-all">
-            Cadastre-se
-          </a>
-        </div>
-      </nav>
-    </div>
-  </header>
+  <!-- Header (renderizado dinamicamente por header.js) -->
+  <header id="header-root" class="border-b border-border"></header>
 
   <main class="max-w-3xl mx-auto px-6 py-10">
 
@@ -166,6 +141,10 @@
     </div>
   </div>
 
+<script src="../js/components/header.js"></script>
+<script>
+  renderHeader({ contexto: 'pages', paginaAtiva: 'perfil', largura: 'narrow' });
+</script>
 <script src="../js/main.js"></script>
 <script src="../js/pages/perfil.js"></script>
 

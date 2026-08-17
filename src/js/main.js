@@ -5,65 +5,54 @@
 // ========================================
 
 /**
- * Monta o estado do header (login/logout) em qualquer página que tenha
- * os elementos com esses IDs. Se a página não tiver, a função não faz nada
- * — então é seguro chamar em toda página sem precisar checar antes.
+ * Monta o estado do header (login/logout) em qualquer página que use o
+ * componente header.js. Como o menu mobile duplica os mesmos elementos
+ * (nome do usuário, botão de sair), usamos classes em vez de ids e
+ * aplicamos a mudança em todas as ocorrências de uma vez.
  */
 function montarHeader() {
-  const areaLogado = document.getElementById('header-logado');
-  const areaDeslogado = document.getElementById('header-deslogado');
-  const nomeUsuarioEl = document.getElementById('header-nome-usuario');
-  const btnLogout = document.getElementById('header-btn-logout');
+  const areasLogado = document.querySelectorAll('.header-logado');
+  const areasDeslogado = document.querySelectorAll('.header-deslogado');
+  const nomeUsuarioEls = document.querySelectorAll('.header-nome-usuario');
+  const botoesLogout = document.querySelectorAll('.header-btn-logout');
 
-  if (!areaLogado && !areaDeslogado) return; // página não usa esse componente
+  if (areasLogado.length === 0 && areasDeslogado.length === 0) return; // página não usa o header
 
-  const mostrar = (el) => { if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } };
-  const esconder = (el) => { if (el) { el.classList.add('hidden'); el.classList.remove('flex'); } };
+  const mostrar = (el) => { el.classList.remove('hidden'); el.classList.add('flex'); };
+  const esconder = (el) => { el.classList.add('hidden'); el.classList.remove('flex'); };
 
   if (Auth.estaLogado()) {
     const usuario = Auth.usuarioAtual();
-    mostrar(areaLogado);
-    esconder(areaDeslogado);
-    if (nomeUsuarioEl && usuario) nomeUsuarioEl.textContent = usuario.nm_usuario;
+    areasLogado.forEach(mostrar);
+    areasDeslogado.forEach(esconder);
+    if (usuario) {
+      nomeUsuarioEls.forEach((el) => { el.textContent = usuario.nm_usuario; });
+    }
   } else {
-    esconder(areaLogado);
-    mostrar(areaDeslogado);
+    areasLogado.forEach(esconder);
+    areasDeslogado.forEach(mostrar);
   }
 
-  if (btnLogout) {
-    btnLogout.addEventListener('click', () => Auth.logout());
-  }
+  botoesLogout.forEach((btn) => {
+    btn.addEventListener('click', () => Auth.logout());
+  });
 }
 
-/**
- * Formata o campo dt_lancamento (que no banco é só o ano) para exibição.
- */
 function formatarAno(ano) {
   return ano ? String(ano) : 'Ano desconhecido';
 }
 
-/**
- * Formata uma nota numérica (ex: "7.7" vindo como string do banco) para
- * sempre exibir com uma casa decimal.
- */
 function formatarNota(nota) {
   const numero = parseFloat(nota);
   return Number.isFinite(numero) ? numero.toFixed(1) : '—';
 }
 
-/**
- * Trunca um texto longo (ex: sinopse) até um limite de caracteres,
- * adicionando reticências. Não corta no meio de uma palavra.
- */
 function truncarTexto(texto, limite = 140) {
   if (!texto || texto.length <= limite) return texto || '';
   const cortado = texto.slice(0, limite);
   return cortado.slice(0, cortado.lastIndexOf(' ')) + '…';
 }
 
-/**
- * Exibe uma mensagem de erro em um elemento específico da página.
- */
 function exibirErro(elementoOuId, mensagem) {
   const el = typeof elementoOuId === 'string'
     ? document.getElementById(elementoOuId)
@@ -74,9 +63,6 @@ function exibirErro(elementoOuId, mensagem) {
   el.classList.remove('hidden');
 }
 
-/**
- * Esconde e limpa uma mensagem de erro.
- */
 function limparErro(elementoOuId) {
   const el = typeof elementoOuId === 'string'
     ? document.getElementById(elementoOuId)
@@ -87,5 +73,4 @@ function limparErro(elementoOuId) {
   el.classList.add('hidden');
 }
 
-// roda automaticamente em toda página que carregar este script
 document.addEventListener('DOMContentLoaded', montarHeader);
