@@ -6,12 +6,12 @@
 <title>Ranking · CineTrack</title>
 <link rel="stylesheet" href="../../assets/css/output.css">
 </head>
-<body class="bg-night text-cream font-sans min-h-screen">
+<body class="bg-night text-cream font-sans min-h-screen flex flex-col">
 
   <!-- Header (renderizado dinamicamente por header.js) -->
   <header id="header-root" class="border-b border-border"></header>
 
-  <main class="max-w-3xl mx-auto px-6 py-10">
+  <main class="max-w-3xl mx-auto px-6 py-10 flex-1">
 
     <div class="flex items-end justify-between mb-6">
       <div>
@@ -47,6 +47,9 @@
 
   </main>
 
+  <!-- Footer (renderizado dinamicamente por footer.js) -->
+  <footer id="footer-root" class="border-t border-border mt-auto"></footer>
+
   <!-- Template de item do ranking (usado via JS) -->
   <template id="template-item-ranking">
     <li class="item-ranking bg-surface border border-border rounded-card flex items-center gap-4 px-4 py-3">
@@ -71,6 +74,10 @@
 <script src="../js/components/header.js"></script>
 <script>
   renderHeader({ contexto: 'pages', paginaAtiva: 'ranking', largura: 'narrow' });
+</script>
+<script src="../js/components/footer.js"></script>
+<script>
+  renderFooter({ contexto: 'pages', largura: 'narrow' });
 </script>
 <script src="../js/main.js"></script>
 <script src="../js/pages/ranking.js"></script>

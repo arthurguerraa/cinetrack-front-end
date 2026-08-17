@@ -6,12 +6,12 @@
 <title>CineTrack</title>
 <link rel="stylesheet" href="./assets/css/output.css">
 </head>
-<body class="bg-night text-cream font-sans min-h-screen">
+<body class="bg-night text-cream font-sans min-h-screen flex flex-col">
 
   <!-- Header (renderizado dinamicamente por header.js) -->
   <header id="header-root" class="border-b border-border"></header>
 
-  <main class="max-w-5xl mx-auto px-6 py-10">
+  <main class="max-w-5xl mx-auto px-6 py-10 flex-1">
 
     <!-- Busca -->
     <section class="mb-8">
@@ -55,6 +55,9 @@
     <section id="grid-filmes" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5"></section>
 
   </main>
+
+  <!-- Footer (renderizado dinamicamente por footer.js) -->
+  <footer id="footer-root" class="border-t border-border mt-auto"></footer>
 
   <!-- Modal de avaliação rápida -->
   <div id="modal-avaliar" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
@@ -170,6 +173,10 @@
 <script src="./src/js/components/header.js"></script>
 <script>
   renderHeader({ contexto: 'root', paginaAtiva: null, largura: 'wide' });
+</script>
+<script src="./src/js/components/footer.js"></script>
+<script>
+  renderFooter({ contexto: 'root', largura: 'wide' });
 </script>
 <script src="./src/js/main.js"></script>
 <script src="./src/js/pages/home.js"></script>
