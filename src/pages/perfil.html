@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu perfil · CineTrack</title>
+<link rel="stylesheet" href="../../assets/css/output.css">
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+  Auth.protegerPagina();
+</script>
+</head>
+<body class="bg-night text-cream font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-border">
+    <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="../../index.html" class="font-display text-2xl font-semibold tracking-wide">CineTrack</a>
+
+      <nav class="flex items-center gap-6 text-sm">
+        <a href="./ranking.html" class="text-muted hover:text-cream transition-colors">Ranking</a>
+
+        <div id="header-logado" class="hidden items-center gap-4">
+          <a href="./listas.html" class="text-muted hover:text-cream transition-colors">Minhas listas</a>
+          <a href="./perfil.html" class="text-amber">Perfil</a>
+          <span class="text-muted">·</span>
+          <span class="text-cream" id="header-nome-usuario"></span>
+          <button id="header-btn-logout" class="text-muted hover:text-amber transition-colors text-xs border border-border rounded-card px-3 py-1.5">
+            Sair
+          </button>
+        </div>
+
+        <div id="header-deslogado" class="hidden items-center gap-3">
+          <a href="./login.html" class="text-muted hover:text-cream transition-colors">Entrar</a>
+          <a href="./cadastro.html" class="bg-amber text-night font-semibold text-xs rounded-card px-3 py-2 hover:brightness-110 transition-all">
+            Cadastre-se
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-6 py-10">
+
+    <!-- Cartão de identificação do usuário -->
+    <section class="bg-surface border border-border rounded-card px-6 py-6 mb-8 flex items-center gap-4">
+      <div class="w-14 h-14 rounded-full bg-amber/10 border border-amber/30 flex items-center justify-center shrink-0">
+        <span id="avatar-iniciais" class="font-display text-xl text-amber"></span>
+      </div>
+      <div class="min-w-0">
+        <h1 id="perfil-nome" class="font-display text-xl font-semibold truncate"></h1>
+        <p id="perfil-email" class="text-muted text-sm truncate"></p>
+      </div>
+    </section>
+
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="font-display text-2xl font-semibold mb-1">Minhas avaliações</h2>
+        <p class="text-muted text-sm" id="contador-avaliacoes"></p>
+      </div>
+    </div>
+
+    <div class="sprocket mb-8 opacity-60"></div>
+
+    <p id="estado-carregando" class="hidden text-muted text-sm text-center py-10">Carregando suas avaliações...</p>
+
+    <p id="estado-vazio" class="hidden text-muted text-sm text-center py-10">
+      Você ainda não avaliou nenhum filme. Busca um título e conta o que achou.
+    </p>
+
+    <p id="estado-erro" class="hidden text-red-400 text-sm text-center py-10"></p>
+
+    <div id="lista-avaliacoes" class="space-y-3"></div>
+
+  </main>
+
+  <!-- Template de item de avaliação -->
+  <template id="template-avaliacao">
+    <article class="item-avaliacao bg-surface border border-border rounded-card p-4 flex gap-4">
+      <div class="poster w-16 h-24 rounded-sm bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center shrink-0"></div>
+
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-3 mb-1">
+          <h3 class="titulo font-display text-base font-semibold truncate"></h3>
+          <span class="nota shrink-0 font-mono text-amber text-sm">★</span>
+        </div>
+        <p class="ano text-muted text-xs font-mono mb-2"></p>
+        <p class="comentario text-cream text-sm mb-3"></p>
+
+        <div class="flex items-center gap-2">
+          <button class="btn-editar text-xs font-semibold border border-border rounded-card px-3 py-1.5 hover:border-amber hover:text-amber transition-colors">
+            Editar
+          </button>
+          <button class="btn-deletar text-xs font-semibold border border-border rounded-card px-3 py-1.5 text-red-400 hover:border-red-400 transition-colors">
+            Excluir
+          </button>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <!-- Modal: editar avaliação -->
+  <div id="modal-editar" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm">
+
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <p class="text-muted text-xs mb-1">Editando avaliação</p>
+          <h3 id="modal-titulo-filme" class="font-display text-lg font-semibold"></h3>
+        </div>
+        <button id="modal-fechar" class="text-muted hover:text-cream text-xl leading-none">&times;</button>
+      </div>
+
+      <form id="form-editar" class="space-y-4" novalidate>
+        <input type="hidden" id="modal-id-avaliacao">
+
+        <div>
+          <label for="modal-nota" class="block text-xs text-muted mb-1.5 font-medium">Nota (1 a 10)</label>
+          <input
+            type="number"
+            id="modal-nota"
+            min="1"
+            max="10"
+            step="0.5"
+            required
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm font-mono text-cream focus:outline-none focus:border-amber transition-colors"
+          >
+        </div>
+
+        <div>
+          <label for="modal-comentario" class="block text-xs text-muted mb-1.5 font-medium">Comentário (opcional)</label>
+          <textarea
+            id="modal-comentario"
+            rows="3"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors resize-none"
+          ></textarea>
+        </div>
+
+        <p id="modal-erro" class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+
+        <button
+          type="submit"
+          id="modal-btn-salvar"
+          class="w-full bg-amber text-night font-semibold text-sm rounded-card py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          Salvar alterações
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: confirmar exclusão -->
+  <div id="modal-confirmar" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-xs text-center">
+      <p class="text-sm text-cream mb-5">Tem certeza que deseja excluir essa avaliação?</p>
+      <div class="flex gap-3">
+        <button id="modal-confirmar-cancelar" class="flex-1 text-sm font-semibold border border-border rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
+          Cancelar
+        </button>
+        <button id="modal-confirmar-excluir" class="flex-1 text-sm font-semibold bg-red-500 text-night rounded-card py-2 hover:brightness-110 transition-all">
+          Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+
+<script src="../js/main.js"></script>
+<script src="../js/pages/perfil.js"></script>
+
+</body>
+</html>

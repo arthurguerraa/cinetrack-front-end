@@ -103,6 +103,8 @@ const AvaliacoesAPI = {
       body: JSON.stringify({ id_filme, nr_nota, ds_comentario }),
     }),
 
+  listarMinhas: () => apiRequest('/avaliacoes/minhas'),
+
   editar: (id_avaliacao, nr_nota, ds_comentario) =>
     apiRequest(`/avaliacoes/${id_avaliacao}`, {
       method: 'PUT',
