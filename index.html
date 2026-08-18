@@ -23,12 +23,12 @@
           type="text"
           id="campo-busca"
           placeholder="Ex: Batman, Interestelar, Vingadores..."
-          class="flex-1 bg-surface border border-border rounded-card px-4 py-3 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
+          class="flex-1 min-w-0 bg-surface border border-border rounded-card px-4 py-3 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
         >
         <button
           type="submit"
           id="btn-buscar"
-          class="bg-amber text-night font-semibold text-sm rounded-card px-6 py-3 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          class="shrink-0 bg-amber text-night font-semibold text-sm rounded-card px-6 py-3 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
         >
           Buscar
         </button>
@@ -52,7 +52,7 @@
     <p id="estado-erro" class="hidden text-red-400 text-sm text-center py-10"></p>
 
     <!-- Grid de filmes -->
-    <section id="grid-filmes" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5"></section>
+    <section id="grid-filmes" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5"></section>
 
   </main>
 
@@ -61,14 +61,14 @@
 
   <!-- Modal de avaliação rápida -->
   <div id="modal-avaliar" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
-    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm max-h-[90vh] overflow-y-auto">
 
       <div class="flex items-start justify-between mb-4">
         <div>
           <p class="text-muted text-xs mb-1">Avaliando</p>
           <h3 id="modal-titulo-filme" class="font-display text-lg font-semibold"></h3>
         </div>
-        <button id="modal-fechar" class="text-muted hover:text-cream text-xl leading-none">&times;</button>
+        <button id="modal-fechar" class="text-muted hover:text-cream text-xl leading-none shrink-0 ml-3">&times;</button>
       </div>
 
       <form id="form-avaliar" class="space-y-4" novalidate>
@@ -113,14 +113,14 @@
 
   <!-- Modal: adicionar filme a uma lista -->
   <div id="modal-listas" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
-    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm max-h-[90vh] overflow-y-auto">
 
       <div class="flex items-start justify-between mb-4">
         <div>
           <p class="text-muted text-xs mb-1">Adicionar à lista</p>
           <h3 id="modal-listas-titulo-filme" class="font-display text-lg font-semibold"></h3>
         </div>
-        <button id="modal-listas-fechar" class="text-muted hover:text-cream text-xl leading-none">&times;</button>
+        <button id="modal-listas-fechar" class="text-muted hover:text-cream text-xl leading-none shrink-0 ml-3">&times;</button>
       </div>
 
       <p id="modal-listas-carregando" class="hidden text-muted text-sm text-center py-6">Carregando suas listas...</p>
@@ -143,17 +143,17 @@
   <template id="template-card-filme">
     <article class="bg-surface border border-border rounded-card overflow-hidden flex flex-col">
       <div class="poster aspect-[2/3] bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center"></div>
-      <div class="border-t border-dashed border-border px-4 py-3 flex-1 flex flex-col">
-        <h3 class="titulo font-display text-sm font-semibold leading-snug mb-2"></h3>
+      <div class="border-t border-dashed border-border px-3 sm:px-4 py-3 flex-1 flex flex-col">
+        <h3 class="titulo font-display text-sm font-semibold leading-snug mb-2 line-clamp-2"></h3>
         <div class="flex items-center justify-between text-xs font-mono text-muted mb-3">
           <span class="nota text-amber"></span>
           <span class="ano"></span>
         </div>
-        <div class="mt-auto flex gap-2">
-          <button class="btn-avaliar flex-1 border border-border text-cream text-xs font-semibold rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
+        <div class="mt-auto flex gap-1.5 sm:gap-2">
+          <button class="btn-avaliar flex-1 min-w-0 border border-border text-cream text-xs font-semibold rounded-card py-2 px-1 text-center hover:border-amber hover:text-amber transition-colors">
             Avaliar
           </button>
-          <button class="btn-add-lista border border-border text-cream text-xs font-semibold rounded-card px-2.5 hover:border-amber hover:text-amber transition-colors" title="Adicionar à lista">
+          <button class="btn-add-lista shrink-0 border border-border text-cream text-xs font-semibold rounded-card px-2.5 hover:border-amber hover:text-amber transition-colors" title="Adicionar à lista">
             +
           </button>
         </div>

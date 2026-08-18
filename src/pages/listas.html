@@ -22,7 +22,7 @@
 
   <main class="max-w-3xl mx-auto px-6 py-10 flex-1">
 
-    <div class="flex items-end justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
       <div>
         <h1 class="font-display text-3xl font-semibold mb-1">Minhas listas</h1>
         <p class="text-muted text-sm">Organize os filmes do seu jeito.</p>
@@ -30,7 +30,7 @@
 
       <button
         id="btn-nova-lista"
-        class="bg-amber text-night font-semibold text-sm rounded-card px-4 py-2.5 hover:brightness-110 active:scale-[0.98] transition-all"
+        class="w-full sm:w-auto shrink-0 bg-amber text-night font-semibold text-sm rounded-card px-4 py-2.5 hover:brightness-110 active:scale-[0.98] transition-all"
       >
         + Nova lista
       </button>
@@ -53,21 +53,21 @@
   <!-- Template de card de lista -->
   <template id="template-card-lista">
     <article class="card-lista bg-surface border border-border rounded-card px-5 py-4 flex flex-col">
-      <div class="flex items-start justify-between mb-2">
-        <h3 class="titulo font-display text-base font-semibold"></h3>
-        <span class="badge-visibilidade text-[10px] font-mono uppercase tracking-wide rounded-sm px-2 py-1 shrink-0 ml-2"></span>
+      <div class="flex items-start justify-between gap-2 mb-2">
+        <h3 class="titulo font-display text-base font-semibold line-clamp-2"></h3>
+        <span class="badge-visibilidade text-[10px] font-mono uppercase tracking-wide rounded-sm px-2 py-1 shrink-0"></span>
       </div>
 
       <p class="descricao text-muted text-sm mb-4 flex-1"></p>
 
-      <div class="flex items-center gap-2 pt-3 border-t border-border">
-        <button class="btn-ver flex-1 text-xs font-semibold border border-border rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
+      <div class="flex items-center gap-1.5 sm:gap-2 pt-3 border-t border-border">
+        <button class="btn-ver flex-1 min-w-0 text-center text-xs font-semibold border border-border rounded-card py-2 px-1 hover:border-amber hover:text-amber transition-colors">
           Ver filmes
         </button>
-        <button class="btn-editar text-xs font-semibold border border-border rounded-card px-3 py-2 hover:border-amber hover:text-amber transition-colors">
+        <button class="btn-editar shrink-0 text-xs font-semibold border border-border rounded-card px-3 py-2 hover:border-amber hover:text-amber transition-colors">
           Editar
         </button>
-        <button class="btn-deletar text-xs font-semibold border border-border rounded-card px-3 py-2 text-red-400 hover:border-red-400 transition-colors">
+        <button class="btn-deletar shrink-0 text-xs font-semibold border border-border rounded-card px-3 py-2 text-red-400 hover:border-red-400 transition-colors">
           Excluir
         </button>
       </div>
@@ -87,11 +87,11 @@
 
   <!-- Modal: criar / editar lista -->
   <div id="modal-lista" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
-    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm max-h-[90vh] overflow-y-auto">
 
       <div class="flex items-start justify-between mb-4">
         <h3 id="modal-lista-titulo" class="font-display text-lg font-semibold">Nova lista</h3>
-        <button id="modal-lista-fechar" class="text-muted hover:text-cream text-xl leading-none">&times;</button>
+        <button id="modal-lista-fechar" class="text-muted hover:text-cream text-xl leading-none shrink-0 ml-3">&times;</button>
       </div>
 
       <form id="form-lista" class="space-y-4" novalidate>
@@ -119,7 +119,7 @@
         </div>
 
         <label class="flex items-center gap-2 text-sm text-cream cursor-pointer">
-          <input type="checkbox" id="lista-visibilidade" checked class="accent-amber w-4 h-4">
+          <input type="checkbox" id="lista-visibilidade" checked class="accent-amber w-4 h-4 shrink-0">
           Tornar essa lista pública
         </label>
 
@@ -138,11 +138,11 @@
 
   <!-- Modal: ver filmes da lista -->
   <div id="modal-filmes" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
-    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-md max-h-[80vh] flex flex-col">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-md max-h-[85vh] flex flex-col">
 
-      <div class="flex items-start justify-between mb-4 shrink-0">
-        <h3 id="modal-filmes-titulo" class="font-display text-lg font-semibold"></h3>
-        <button id="modal-filmes-fechar" class="text-muted hover:text-cream text-xl leading-none">&times;</button>
+      <div class="flex items-start justify-between gap-3 mb-4 shrink-0">
+        <h3 id="modal-filmes-titulo" class="font-display text-lg font-semibold min-w-0 truncate"></h3>
+        <button id="modal-filmes-fechar" class="text-muted hover:text-cream text-xl leading-none shrink-0">&times;</button>
       </div>
 
       <p id="modal-filmes-vazio" class="hidden text-muted text-sm py-6 text-center">
