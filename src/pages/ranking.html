@@ -13,7 +13,7 @@
 
   <main class="max-w-3xl mx-auto px-6 py-10 flex-1">
 
-    <div class="flex items-end justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
       <div>
         <h1 class="font-display text-3xl font-semibold mb-1">Ranking</h1>
         <p class="text-muted text-sm">Os filmes mais bem avaliados pela comunidade.</p>
@@ -21,7 +21,7 @@
 
       <select
         id="seletor-limite"
-        class="bg-surface border border-border rounded-card px-3 py-2 text-sm text-cream focus:outline-none focus:border-amber"
+        class="w-full sm:w-auto shrink-0 bg-surface border border-border rounded-card px-3 py-2 text-sm text-cream focus:outline-none focus:border-amber"
       >
         <option value="10">Top 10</option>
         <option value="20">Top 20</option>
@@ -52,17 +52,18 @@
 
   <!-- Template de item do ranking (usado via JS) -->
   <template id="template-item-ranking">
-    <li class="item-ranking bg-surface border border-border rounded-card flex items-center gap-4 px-4 py-3">
-      <span class="posicao font-mono text-lg text-muted w-10 text-center shrink-0"></span>
+    <li class="item-ranking bg-surface border border-border rounded-card flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3">
+      <span class="posicao font-mono text-lg text-muted w-8 sm:w-10 text-center shrink-0"></span>
 
-      <div class="poster w-12 h-[72px] rounded-sm bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center shrink-0"></div>
+      <!-- poster escondido em telas muito estreitas, para dar espaço ao título -->
+      <div class="poster hidden min-[400px]:block w-12 h-[72px] rounded-sm bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center shrink-0"></div>
 
       <div class="flex-1 min-w-0">
         <h3 class="titulo font-display text-sm font-semibold truncate"></h3>
         <p class="ano text-muted text-xs font-mono"></p>
       </div>
 
-      <div class="text-right shrink-0">
+      <div class="text-right shrink-0 max-w-[64px] sm:max-w-none">
         <p class="nota font-mono text-amber text-base"></p>
         <p class="total-avaliacoes text-muted text-[11px]"></p>
       </div>
