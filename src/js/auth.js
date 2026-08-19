@@ -29,15 +29,35 @@ const Auth = {
     return dados ? JSON.parse(dados) : null;
   },
 
-  logout(caminhoLogin = 'login.html') {
-    localStorage.removeItem('token');
-    localStorage.removeItem('usuario');
-    window.location.href = caminhoLogin;
+  /**
+   * Calcula o caminho correto até login.html a partir da página atual.
+   * O header (e o botão "Sair" dentro dele) aparece tanto na home
+   * (raiz do projeto) quanto nas páginas dentro de src/pages/, e o
+   * caminho relativo para login.html é diferente em cada caso.
+   */
+  _caminhoLogin() {
+    const estaEmPages = window.location.pathname.includes('/src/pages/');
+    return estaEmPages ? 'login.html' : 'src/pages/login.html';
   },
 
-  protegerPagina(caminhoLogin = 'login.html') {
+  /**
+   * @param {string} [caminhoLogin] - opcional. Se não for informado,
+   *   o caminho correto é calculado automaticamente com base na URL atual.
+   */
+  logout(caminhoLogin) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    window.location.href = caminhoLogin || this._caminhoLogin();
+  },
+
+  /**
+   * @param {string} [caminhoLogin] - mesma lógica do logout(). As páginas
+   *   protegidas (listas.html, perfil.html) já ficam dentro de src/pages/,
+   *   então continuam podendo chamar isso sem argumento normalmente.
+   */
+  protegerPagina(caminhoLogin) {
     if (!this.estaLogado()) {
-      window.location.href = caminhoLogin;
+      window.location.href = caminhoLogin || this._caminhoLogin();
     }
   },
 };
