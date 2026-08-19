@@ -39,7 +39,7 @@ function renderFooter({ contexto = 'pages', largura = 'narrow' } = {}) {
   const anoAtual = new Date().getFullYear();
 
   const html = `
-    <div class="${maxWidth} mx-auto px-6 py-10">
+    <div class="${maxWidth} mx-auto px-4 sm:px-6 py-10">
       <div class="sprocket mb-8 opacity-40"></div>
 
       <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
