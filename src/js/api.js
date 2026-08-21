@@ -82,8 +82,13 @@ const FilmesAPI = {
   buscar: (termo) =>
     apiRequest(`/filmes/buscar?q=${encodeURIComponent(termo)}`),
 
-  listar: (genero) =>
-    apiRequest(`/filmes${genero ? `?genero=${encodeURIComponent(genero)}` : ''}`),
+  listar: ({ genero, page = 1, limit = 20 } = {}) => {
+    const params = new URLSearchParams();
+    if (genero) params.set('genero', genero);
+    params.set('page', page);
+    params.set('limit', limit);
+    return apiRequest(`/filmes?${params.toString()}`);
+  },
 };
 
 // ----------------------------------------

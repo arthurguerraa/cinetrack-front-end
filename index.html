@@ -54,6 +54,23 @@
     <!-- Grid de filmes -->
     <section id="grid-filmes" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5"></section>
 
+    <!-- Paginação -->
+    <div id="paginacao" class="hidden items-center justify-center gap-3 sm:gap-4 mt-12 pt-8 border-t border-border">
+      <button
+        id="btn-pagina-anterior"
+        class="shrink-0 border border-border text-cream text-xs font-semibold rounded-card px-3 sm:px-4 py-2 hover:border-amber hover:text-amber transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:text-cream"
+      >
+        Anterior
+      </button>
+      <span id="paginacao-info" class="text-muted text-xs font-mono shrink-0"></span>
+      <button
+        id="btn-proxima-pagina"
+        class="shrink-0 border border-border text-cream text-xs font-semibold rounded-card px-3 sm:px-4 py-2 hover:border-amber hover:text-amber transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:text-cream"
+      >
+        Próxima
+      </button>
+    </div>
+
   </main>
 
   <!-- Footer (renderizado dinamicamente por footer.js) -->

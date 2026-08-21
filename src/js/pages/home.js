@@ -2,6 +2,16 @@
 // src/js/pages/home.js
 // Lógica da home/busca de filmes.
 // Depende de api.js, auth.js e main.js já carregados antes deste arquivo.
+//
+// A tela tem 3 modos possíveis, sempre consultando o TMDB direto
+// (nunca a tabela local acumulada):
+//   - 'populares' — estado padrão, sem busca nem filtro
+//   - 'genero'    — um gênero selecionado, sem busca
+//   - 'busca'     — termo digitado na busca
+//
+// O estado atual (modo + termo/gênero + página) fica sincronizado com a
+// URL (?q=...&genero=...&page=...), para sobreviver a um F5 e permitir
+// compartilhar o link de uma busca específica.
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,6 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const templateCard = document.getElementById('template-card-filme');
   const templateOpcaoLista = document.getElementById('template-opcao-lista');
+
+  // paginação
+  const paginacao = document.getElementById('paginacao');
+  const paginacaoInfo = document.getElementById('paginacao-info');
+  const btnPaginaAnterior = document.getElementById('btn-pagina-anterior');
+  const btnProximaPagina = document.getElementById('btn-proxima-pagina');
 
   // modal de avaliação
   const modal = document.getElementById('modal-avaliar');
@@ -39,7 +55,63 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalListasSucesso = document.getElementById('modal-listas-sucesso');
   const modalListasOpcoes = document.getElementById('modal-listas-opcoes');
 
+  // ----------------------------------------
+  // Estado atual da tela
+  // ----------------------------------------
+  let modoAtual = 'populares'; // 'populares' | 'genero' | 'busca'
   let generoSelecionado = null;
+  let termoBusca = null;
+  let paginaAtual = 1;
+
+  // ----------------------------------------
+  // Sincronização com a URL
+  // ----------------------------------------
+  function lerEstadoDaURL() {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q');
+    const genero = params.get('genero');
+    const page = parseInt(params.get('page')) || 1;
+
+    if (q) {
+      modoAtual = 'busca';
+      termoBusca = q;
+      generoSelecionado = null;
+    } else if (genero) {
+      modoAtual = 'genero';
+      generoSelecionado = genero;
+      termoBusca = null;
+    } else {
+      modoAtual = 'populares';
+      generoSelecionado = null;
+      termoBusca = null;
+    }
+
+    paginaAtual = page;
+  }
+
+  function atualizarURL({ push = true } = {}) {
+    const params = new URLSearchParams();
+    if (modoAtual === 'busca' && termoBusca) params.set('q', termoBusca);
+    if (modoAtual === 'genero' && generoSelecionado) params.set('genero', generoSelecionado);
+    if (paginaAtual > 1) params.set('page', paginaAtual);
+
+    const query = params.toString();
+    const novaURL = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+
+    if (push) {
+      window.history.pushState({}, '', novaURL);
+    } else {
+      window.history.replaceState({}, '', novaURL);
+    }
+  }
+
+  // volta/avança do navegador — relê o estado da URL e recarrega
+  window.addEventListener('popstate', () => {
+    lerEstadoDaURL();
+    campoBusca.value = termoBusca || '';
+    atualizarPillsGenero();
+    carregarConformeModo({ atualizarUrlComPush: false });
+  });
 
   // ----------------------------------------
   // Estados de exibição do grid principal
@@ -49,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     estadoCarregando.classList.add('hidden');
     estadoVazio.classList.add('hidden');
     estadoErro.classList.add('hidden');
+    esconderPaginacao();
   }
 
   function mostrarCarregando() {
@@ -68,6 +141,44 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------
+  // Paginação
+  // ----------------------------------------
+  function esconderPaginacao() {
+    paginacao.classList.add('hidden');
+    paginacao.classList.remove('flex');
+  }
+
+  function atualizarPaginacao(pagination) {
+    if (!pagination || pagination.totalPages <= 1) {
+      esconderPaginacao();
+      return;
+    }
+
+    paginacao.classList.remove('hidden');
+    paginacao.classList.add('flex');
+    paginacaoInfo.textContent = `Página ${pagination.page} de ${pagination.totalPages}`;
+    btnPaginaAnterior.disabled = !pagination.hasPrev;
+    btnProximaPagina.disabled = !pagination.hasNext;
+  }
+
+  function irParaTopoDoGrid() {
+    gridFilmes.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  btnPaginaAnterior.addEventListener('click', () => {
+    if (paginaAtual <= 1) return;
+    paginaAtual -= 1;
+    carregarConformeModo();
+    irParaTopoDoGrid();
+  });
+
+  btnProximaPagina.addEventListener('click', () => {
+    paginaAtual += 1;
+    carregarConformeModo();
+    irParaTopoDoGrid();
+  });
+
+  // ----------------------------------------
   // Renderização do grid
   // ----------------------------------------
   function renderizarFilmes(filmes) {
@@ -82,10 +193,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const card = templateCard.content.cloneNode(true);
 
       const id = filme.id_filme;
-      const titulo = filme.nm_filme || filme.titulo;
-      const poster = filme.ds_poster || filme.poster;
-      const ano = filme.dt_lancamento || filme.ano;
-      const nota = filme.nr_nota_media ?? filme.nota;
+      const titulo = filme.titulo;
+      const poster = filme.poster;
+      const ano = filme.ano;
+      const nota = filme.nota;
 
       const posterEl = card.querySelector('.poster');
       if (poster) posterEl.style.backgroundImage = `url('${poster}')`;
@@ -102,28 +213,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------
-  // Carregamento inicial (filmes já salvos no banco)
+  // Carregamento central — decide qual API chamar conforme o modo atual
   // ----------------------------------------
-  async function carregarFilmesSalvos(genero = null) {
+  async function carregarConformeModo({ atualizarUrlComPush = true } = {}) {
     mostrarCarregando();
-    try {
-      const filmes = await FilmesAPI.listar(genero);
-      renderizarFilmes(filmes);
-    } catch (err) {
-      mostrarErro(err.message);
-    }
-  }
-
-  // ----------------------------------------
-  // Busca por termo (consulta o TMDB via backend)
-  // ----------------------------------------
-  async function buscarFilmes(termo) {
-    mostrarCarregando();
+    atualizarURL({ push: atualizarUrlComPush });
     btnBuscar.disabled = true;
 
     try {
-      const filmes = await FilmesAPI.buscar(termo);
-      renderizarFilmes(filmes);
+      let resposta;
+
+      if (modoAtual === 'busca') {
+        resposta = await FilmesAPI.buscar(termoBusca, paginaAtual);
+      } else if (modoAtual === 'genero') {
+        resposta = await FilmesAPI.porGenero(generoSelecionado, paginaAtual);
+      } else {
+        resposta = await FilmesAPI.populares(paginaAtual);
+      }
+
+      renderizarFilmes(resposta.data);
+      atualizarPaginacao(resposta.pagination);
     } catch (err) {
       mostrarErro(err.message);
     } finally {
@@ -131,14 +240,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ----------------------------------------
+  // Busca por termo
+  // ----------------------------------------
   formBusca.addEventListener('submit', (evento) => {
     evento.preventDefault();
     const termo = campoBusca.value.trim();
     if (!termo) return;
 
+    modoAtual = 'busca';
+    termoBusca = termo;
     generoSelecionado = null;
+    paginaAtual = 1;
+
     atualizarPillsGenero();
-    buscarFilmes(termo);
+    carregarConformeModo();
   });
 
   // ----------------------------------------
@@ -146,13 +262,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   function atualizarPillsGenero() {
     document.querySelectorAll('.pill-genero').forEach((pill) => {
-      const ativo = pill.dataset.genero === generoSelecionado;
-      pill.classList.toggle('bg-amber', ativo);
-      pill.classList.toggle('text-night', ativo);
-      pill.classList.toggle('border-amber', ativo);
-      pill.classList.toggle('bg-surface', !ativo);
-      pill.classList.toggle('text-muted', !ativo);
-      pill.classList.toggle('border-border', !ativo);
+      // dataset sempre vem como string — normaliza '' para null antes de comparar
+      const valorPill = pill.dataset.genero || null;
+      const ativo = modoAtual === 'genero' && valorPill === generoSelecionado;
+      const ativoTodos = modoAtual !== 'genero' && valorPill === null;
+
+      const estaAtivo = ativo || ativoTodos;
+
+      pill.classList.toggle('bg-amber', estaAtivo);
+      pill.classList.toggle('text-night', estaAtivo);
+      pill.classList.toggle('border-amber', estaAtivo);
+      pill.classList.toggle('bg-surface', !estaAtivo);
+      pill.classList.toggle('text-muted', !estaAtivo);
+      pill.classList.toggle('border-border', !estaAtivo);
     });
   }
 
@@ -182,10 +304,20 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.className = 'pill-genero text-xs font-medium rounded-card border px-3 py-1.5 transition-colors bg-surface text-muted border-border';
 
     btn.addEventListener('click', () => {
-      generoSelecionado = valor;
       campoBusca.value = '';
+      termoBusca = null;
+      paginaAtual = 1;
+
+      if (valor) {
+        modoAtual = 'genero';
+        generoSelecionado = valor;
+      } else {
+        modoAtual = 'populares';
+        generoSelecionado = null;
+      }
+
       atualizarPillsGenero();
-      carregarFilmesSalvos(valor);
+      carregarConformeModo();
     });
 
     return btn;
@@ -313,6 +445,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   // Inicialização da página
   // ----------------------------------------
-  carregarGeneros();
-  carregarFilmesSalvos();
+  lerEstadoDaURL();
+  campoBusca.value = termoBusca || '';
+
+  carregarGeneros().then(atualizarPillsGenero);
+  carregarConformeModo({ atualizarUrlComPush: false });
 });
