@@ -4,13 +4,13 @@
 // Nenhum outro arquivo deve usar fetch() diretamente.
 // ========================================
 
-const API_URL = 'http://localhost:3000';
+const API_URL = "http://localhost:3000";
 
 async function apiRequest(endpoint, options = {}) {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   const headers = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
@@ -19,14 +19,16 @@ async function apiRequest(endpoint, options = {}) {
   try {
     resposta = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
   } catch (err) {
-    throw new Error('Não foi possível conectar ao servidor. Verifique se a API está rodando.');
+    throw new Error(
+      "Não foi possível conectar ao servidor. Verifique se a API está rodando.",
+    );
   }
 
   const temCorpo = resposta.status !== 204;
   const dados = temCorpo ? await resposta.json().catch(() => ({})) : {};
 
   if (!resposta.ok) {
-    const erro = new Error(dados.error || 'Ocorreu um erro na requisição.');
+    const erro = new Error(dados.error || "Ocorreu um erro na requisição.");
     Object.assign(erro, dados);
     throw erro;
   }
@@ -39,38 +41,38 @@ async function apiRequest(endpoint, options = {}) {
 // ----------------------------------------
 const AuthAPI = {
   login: (ds_email, ds_senha) =>
-    apiRequest('/auth/login', {
-      method: 'POST',
+    apiRequest("/auth/login", {
+      method: "POST",
       body: JSON.stringify({ ds_email, ds_senha }),
     }),
 
   cadastrar: (nm_usuario, ds_email, ds_senha) =>
-    apiRequest('/auth/cadastrar', {
-      method: 'POST',
+    apiRequest("/auth/cadastrar", {
+      method: "POST",
       body: JSON.stringify({ nm_usuario, ds_email, ds_senha }),
     }),
 
   verificarCodigo: (ds_email, codigo) =>
-    apiRequest('/auth/verificar', {
-      method: 'POST',
+    apiRequest("/auth/verificar", {
+      method: "POST",
       body: JSON.stringify({ ds_email, codigo }),
     }),
 
   reenviarCodigo: (ds_email) =>
-    apiRequest('/auth/reenviar-codigo', {
-      method: 'POST',
+    apiRequest("/auth/reenviar-codigo", {
+      method: "POST",
       body: JSON.stringify({ ds_email }),
     }),
 
   esqueciSenha: (ds_email) =>
-    apiRequest('/auth/esqueci-senha', {
-      method: 'POST',
+    apiRequest("/auth/esqueci-senha", {
+      method: "POST",
       body: JSON.stringify({ ds_email }),
     }),
 
   redefinirSenha: (ds_email, codigo, nova_senha) =>
-    apiRequest('/auth/redefinir-senha', {
-      method: 'POST',
+    apiRequest("/auth/redefinir-senha", {
+      method: "POST",
       body: JSON.stringify({ ds_email, codigo, nova_senha }),
     }),
 };
@@ -79,23 +81,22 @@ const AuthAPI = {
 // Filmes
 // ----------------------------------------
 const FilmesAPI = {
-  buscar: (termo) =>
-    apiRequest(`/filmes/buscar?q=${encodeURIComponent(termo)}`),
+  populares: (page = 1) => apiRequest(`/filmes/populares?page=${page}`),
 
-  listar: ({ genero, page = 1, limit = 20 } = {}) => {
-    const params = new URLSearchParams();
-    if (genero) params.set('genero', genero);
-    params.set('page', page);
-    params.set('limit', limit);
-    return apiRequest(`/filmes?${params.toString()}`);
-  },
+  porGenero: (genero, page = 1) =>
+    apiRequest(
+      `/filmes/genero?nome=${encodeURIComponent(genero)}&page=${page}`,
+    ),
+
+  buscar: (termo, page = 1) =>
+    apiRequest(`/filmes/buscar?q=${encodeURIComponent(termo)}&page=${page}`),
 };
 
 // ----------------------------------------
 // Gêneros
 // ----------------------------------------
 const GenerosAPI = {
-  listar: () => apiRequest('/generos'),
+  listar: () => apiRequest("/generos"),
 };
 
 // ----------------------------------------
@@ -103,21 +104,21 @@ const GenerosAPI = {
 // ----------------------------------------
 const AvaliacoesAPI = {
   criar: (id_filme, nr_nota, ds_comentario) =>
-    apiRequest('/avaliacoes', {
-      method: 'POST',
+    apiRequest("/avaliacoes", {
+      method: "POST",
       body: JSON.stringify({ id_filme, nr_nota, ds_comentario }),
     }),
 
-  listarMinhas: () => apiRequest('/avaliacoes/minhas'),
+  listarMinhas: () => apiRequest("/avaliacoes/minhas"),
 
   editar: (id_avaliacao, nr_nota, ds_comentario) =>
     apiRequest(`/avaliacoes/${id_avaliacao}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify({ nr_nota, ds_comentario }),
     }),
 
   deletar: (id_avaliacao) =>
-    apiRequest(`/avaliacoes/${id_avaliacao}`, { method: 'DELETE' }),
+    apiRequest(`/avaliacoes/${id_avaliacao}`, { method: "DELETE" }),
 };
 
 // ----------------------------------------
@@ -125,30 +126,29 @@ const AvaliacoesAPI = {
 // ----------------------------------------
 const ListasAPI = {
   criar: (nm_lista, ds_lista, is_visibilidade) =>
-    apiRequest('/listas', {
-      method: 'POST',
+    apiRequest("/listas", {
+      method: "POST",
       body: JSON.stringify({ nm_lista, ds_lista, is_visibilidade }),
     }),
 
-  listarMinhas: () => apiRequest('/listas'),
+  listarMinhas: () => apiRequest("/listas"),
 
   editar: (id_lista, nm_lista, ds_lista, is_visibilidade) =>
     apiRequest(`/listas/${id_lista}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify({ nm_lista, ds_lista, is_visibilidade }),
     }),
 
   deletar: (id_lista) =>
-    apiRequest(`/listas/${id_lista}`, { method: 'DELETE' }),
+    apiRequest(`/listas/${id_lista}`, { method: "DELETE" }),
 
   adicionarFilme: (id_lista, id_filme) =>
-    apiRequest('/listas/filmes', {
-      method: 'POST',
+    apiRequest("/listas/filmes", {
+      method: "POST",
       body: JSON.stringify({ id_lista, id_filme }),
     }),
 
-  verFilmes: (id_lista) =>
-    apiRequest(`/listas/${id_lista}/filmes`),
+  verFilmes: (id_lista) => apiRequest(`/listas/${id_lista}/filmes`),
 };
 
 // ----------------------------------------
