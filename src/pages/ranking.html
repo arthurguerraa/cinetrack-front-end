@@ -1,32 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ranking · CineTrack</title>
-<link rel="stylesheet" href="../../assets/css/output.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ranking · CineTrack</title>
+  <link rel="stylesheet" href="../../assets/css/output.css">
 </head>
-<body class="bg-night text-cream font-sans min-h-screen flex flex-col">
+
+<body class="bg-night text-cream font-sans min-h-screen flex flex-col overflow-x-hidden">
 
   <!-- Header (renderizado dinamicamente por header.js) -->
   <header id="header-root" class="border-b border-border"></header>
 
-  <main class="max-w-3xl mx-auto px-6 py-10 flex-1">
+  <main class="w-full max-w-3xl mx-auto px-4 sm:px-6 py-10 flex-1 min-w-0">
 
-    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
-      <div>
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 min-w-0">
+      <div class="min-w-0">
         <h1 class="font-display text-3xl font-semibold mb-1">Ranking</h1>
         <p class="text-muted text-sm">Os filmes mais bem avaliados pela comunidade.</p>
       </div>
 
-      <select
-        id="seletor-limite"
-        class="w-full sm:w-auto shrink-0 bg-surface border border-border rounded-card px-3 py-2 text-sm text-cream focus:outline-none focus:border-amber"
-      >
-        <option value="10">Top 10</option>
-        <option value="20">Top 20</option>
-        <option value="50">Top 50</option>
-      </select>
+      <div class="w-full sm:w-auto shrink-0 min-w-0">
+        <select id="seletor-limite"
+          class="w-full sm:w-auto bg-surface border border-border rounded-card px-3 py-2 text-sm text-cream focus:outline-none focus:border-amber">
+          <option value="10">Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="50">Top 50</option>
+        </select>
+      </div>
     </div>
 
     <div class="sprocket mb-8 opacity-60"></div>
@@ -43,7 +45,7 @@
     <p id="estado-erro" class="hidden text-red-400 text-sm text-center py-10"></p>
 
     <!-- Lista do ranking -->
-    <ol id="lista-ranking" class="space-y-3"></ol>
+    <ol id="lista-ranking" class="w-full space-y-3 min-w-0"></ol>
 
   </main>
 
@@ -52,36 +54,40 @@
 
   <!-- Template de item do ranking (usado via JS) -->
   <template id="template-item-ranking">
-    <li class="item-ranking bg-surface border border-border rounded-card flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3">
-      <span class="posicao font-mono text-lg text-muted w-8 sm:w-10 text-center shrink-0"></span>
+    <li
+      class="item-ranking w-full bg-surface border border-border rounded-card flex items-center gap-2.5 sm:gap-4 px-3 sm:px-4 py-3 min-w-0">
+      <span class="posicao font-mono text-base sm:text-lg text-muted w-7 sm:w-10 text-center shrink-0"></span>
 
       <!-- poster escondido em telas muito estreitas, para dar espaço ao título -->
-      <div class="poster hidden min-[400px]:block w-12 h-[72px] rounded-sm bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center shrink-0"></div>
+      <div
+        class="poster hidden min-[400px]:block w-12 h-[72px] rounded-sm bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center shrink-0">
+      </div>
 
       <div class="flex-1 min-w-0">
         <h3 class="titulo font-display text-sm font-semibold truncate"></h3>
         <p class="ano text-muted text-xs font-mono"></p>
       </div>
 
-      <div class="text-right shrink-0 max-w-[64px] sm:max-w-none">
-        <p class="nota font-mono text-amber text-base"></p>
-        <p class="total-avaliacoes text-muted text-[11px]"></p>
+      <div class="text-right shrink-0 min-w-0">
+        <p class="nota font-mono text-amber text-sm sm:text-base leading-tight"></p>
+        <p class="total-avaliacoes text-muted text-[11px] whitespace-nowrap leading-tight"></p>
       </div>
     </li>
   </template>
 
-<script src="../js/api.js"></script>
-<script src="../js/auth.js"></script>
-<script src="../js/components/header.js"></script>
-<script>
-  renderHeader({ contexto: 'pages', paginaAtiva: 'ranking', largura: 'narrow' });
-</script>
-<script src="../js/components/footer.js"></script>
-<script>
-  renderFooter({ contexto: 'pages', largura: 'narrow' });
-</script>
-<script src="../js/main.js"></script>
-<script src="../js/pages/ranking.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/components/header.js"></script>
+  <script>
+    renderHeader({ contexto: 'pages', paginaAtiva: 'ranking', largura: 'narrow' });
+  </script>
+  <script src="../js/components/footer.js"></script>
+  <script>
+    renderFooter({ contexto: 'pages', largura: 'narrow' });
+  </script>
+  <script src="../js/main.js"></script>
+  <script src="../js/pages/ranking.js"></script>
 
 </body>
+
 </html>
