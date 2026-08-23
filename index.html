@@ -1,42 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CineTrack</title>
-<link rel="stylesheet" href="./assets/css/output.css">
-<link rel="shortcut icon" href="assets/images/android-chrome-512x512.png" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineTrack</title>
+  <link rel="stylesheet" href="./assets/css/output.css">
+  <link rel="shortcut icon" href="assets/images/android-chrome-512x512.png" type="image/x-icon">
 </head>
-<body class="bg-night text-cream font-sans min-h-screen flex flex-col">
+
+<body class="bg-night text-cream font-sans min-h-screen flex flex-col overflow-x-hidden">
 
   <!-- Header (renderizado dinamicamente por header.js) -->
   <header id="header-root" class="border-b border-border"></header>
 
-  <main class="max-w-5xl mx-auto px-6 py-10 flex-1">
+  <main class="w-full max-w-5xl mx-auto px-4 sm:px-6 py-10 flex-1 min-w-0">
 
     <!-- Busca -->
-    <section class="mb-8">
+    <section class="mb-8 min-w-0">
       <h1 class="font-display text-3xl font-semibold mb-1">Encontre um filme</h1>
       <p class="text-muted text-sm mb-6">Busque por título ou filtre por gênero.</p>
 
-      <form id="form-busca" class="flex gap-3" novalidate>
-        <input
-          type="text"
-          id="campo-busca"
-          placeholder="Ex: Batman, Interestelar, Vingadores..."
-          class="flex-1 min-w-0 bg-surface border border-border rounded-card px-4 py-3 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
-        >
-        <button
-          type="submit"
-          id="btn-buscar"
-          class="shrink-0 bg-amber text-night font-semibold text-sm rounded-card px-6 py-3 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-        >
+      <form id="form-busca" class="flex gap-2 sm:gap-3 min-w-0" novalidate>
+        <input type="text" id="campo-busca" placeholder="Ex: Batman, Interestelar, Vingadores..."
+          class="flex-1 min-w-0 bg-surface border border-border rounded-card px-4 py-3 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors">
+        <button type="submit" id="btn-buscar"
+          class="shrink-0 bg-amber text-night font-semibold text-sm rounded-card px-4 sm:px-6 py-3 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
           Buscar
         </button>
       </form>
 
       <!-- Filtro de gêneros -->
-      <div id="filtro-generos" class="flex flex-wrap gap-2 mt-4"></div>
+      <div id="filtro-generos" class="flex flex-wrap gap-2 mt-4 min-w-0"></div>
     </section>
 
     <div class="sprocket mb-8 opacity-60"></div>
@@ -53,21 +48,18 @@
     <p id="estado-erro" class="hidden text-red-400 text-sm text-center py-10"></p>
 
     <!-- Grid de filmes -->
-    <section id="grid-filmes" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5"></section>
+    <section id="grid-filmes" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5 min-w-0"></section>
 
     <!-- Paginação -->
-    <div id="paginacao" class="hidden items-center justify-center gap-3 sm:gap-4 mt-12 pt-8 border-t border-border">
-      <button
-        id="btn-pagina-anterior"
-        class="shrink-0 border border-border text-cream text-xs font-semibold rounded-card px-3 sm:px-4 py-2 hover:border-amber hover:text-amber transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:text-cream"
-      >
+    <div id="paginacao"
+      class="hidden items-center justify-center gap-3 sm:gap-4 mt-12 pt-8 border-t border-border min-w-0">
+      <button id="btn-pagina-anterior"
+        class="shrink-0 border border-border text-cream text-xs font-semibold rounded-card px-3 sm:px-4 py-2 hover:border-amber hover:text-amber transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:text-cream">
         Anterior
       </button>
       <span id="paginacao-info" class="text-muted text-xs font-mono shrink-0"></span>
-      <button
-        id="btn-proxima-pagina"
-        class="shrink-0 border border-border text-cream text-xs font-semibold rounded-card px-3 sm:px-4 py-2 hover:border-amber hover:text-amber transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:text-cream"
-      >
+      <button id="btn-proxima-pagina"
+        class="shrink-0 border border-border text-cream text-xs font-semibold rounded-card px-3 sm:px-4 py-2 hover:border-amber hover:text-amber transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:text-cream">
         Próxima
       </button>
     </div>
@@ -86,7 +78,8 @@
           <p class="text-muted text-xs mb-1">Avaliando</p>
           <h3 id="modal-titulo-filme" class="font-display text-lg font-semibold"></h3>
         </div>
-        <button id="modal-fechar" class="text-muted hover:text-cream text-xl leading-none shrink-0 ml-3">&times;</button>
+        <button id="modal-fechar"
+          class="text-muted hover:text-cream text-xl leading-none shrink-0 ml-3">&times;</button>
       </div>
 
       <form id="form-avaliar" class="space-y-4" novalidate>
@@ -94,34 +87,23 @@
 
         <div>
           <label for="modal-nota" class="block text-xs text-muted mb-1.5 font-medium">Nota (1 a 10)</label>
-          <input
-            type="number"
-            id="modal-nota"
-            min="1"
-            max="10"
-            step="0.5"
-            required
-            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm font-mono text-cream focus:outline-none focus:border-amber transition-colors"
-          >
+          <input type="number" id="modal-nota" min="1" max="10" step="0.5" required
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm font-mono text-cream focus:outline-none focus:border-amber transition-colors">
         </div>
 
         <div>
-          <label for="modal-comentario" class="block text-xs text-muted mb-1.5 font-medium">Comentário (opcional)</label>
-          <textarea
-            id="modal-comentario"
-            rows="3"
+          <label for="modal-comentario" class="block text-xs text-muted mb-1.5 font-medium">Comentário
+            (opcional)</label>
+          <textarea id="modal-comentario" rows="3"
             class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors resize-none"
-            placeholder="O que você achou do filme?"
-          ></textarea>
+            placeholder="O que você achou do filme?"></textarea>
         </div>
 
-        <p id="modal-erro" class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+        <p id="modal-erro"
+          class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
 
-        <button
-          type="submit"
-          id="modal-btn-salvar"
-          class="w-full bg-amber text-night font-semibold text-sm rounded-card py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-        >
+        <button type="submit" id="modal-btn-salvar"
+          class="w-full bg-amber text-night font-semibold text-sm rounded-card py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
           Salvar avaliação
         </button>
       </form>
@@ -138,7 +120,8 @@
           <p class="text-muted text-xs mb-1">Adicionar à lista</p>
           <h3 id="modal-listas-titulo-filme" class="font-display text-lg font-semibold"></h3>
         </div>
-        <button id="modal-listas-fechar" class="text-muted hover:text-cream text-xl leading-none shrink-0 ml-3">&times;</button>
+        <button id="modal-listas-fechar"
+          class="text-muted hover:text-cream text-xl leading-none shrink-0 ml-3">&times;</button>
       </div>
 
       <p id="modal-listas-carregando" class="hidden text-muted text-sm text-center py-6">Carregando suas listas...</p>
@@ -148,9 +131,11 @@
         <a href="./src/pages/listas.html" class="text-amber hover:brightness-110 font-medium">Criar uma lista</a>
       </p>
 
-      <p id="modal-listas-erro" class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2 mb-3"></p>
+      <p id="modal-listas-erro"
+        class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2 mb-3"></p>
 
-      <p id="modal-listas-sucesso" class="hidden text-[13px] text-amber bg-amber/10 border border-amber/30 rounded-card px-3 py-2 mb-3"></p>
+      <p id="modal-listas-sucesso"
+        class="hidden text-[13px] text-amber bg-amber/10 border border-amber/30 rounded-card px-3 py-2 mb-3"></p>
 
       <div id="modal-listas-opcoes" class="space-y-2 max-h-64 overflow-y-auto"></div>
 
@@ -168,10 +153,13 @@
           <span class="ano"></span>
         </div>
         <div class="mt-auto flex gap-1.5 sm:gap-2">
-          <button class="btn-avaliar flex-1 min-w-0 border border-border text-cream text-xs font-semibold rounded-card py-2 px-1 text-center hover:border-amber hover:text-amber transition-colors">
+          <button
+            class="btn-avaliar flex-1 min-w-0 border border-border text-cream text-xs font-semibold rounded-card py-2 px-1 text-center hover:border-amber hover:text-amber transition-colors">
             Avaliar
           </button>
-          <button class="btn-add-lista shrink-0 border border-border text-cream text-xs font-semibold rounded-card px-2.5 hover:border-amber hover:text-amber transition-colors" title="Adicionar à lista">
+          <button
+            class="btn-add-lista shrink-0 border border-border text-cream text-xs font-semibold rounded-card px-2.5 hover:border-amber hover:text-amber transition-colors"
+            title="Adicionar à lista">
             +
           </button>
         </div>
@@ -181,23 +169,25 @@
 
   <!-- Template de opção de lista dentro do modal-listas -->
   <template id="template-opcao-lista">
-    <button class="opcao-lista w-full text-left bg-night border border-border rounded-card px-4 py-3 hover:border-amber transition-colors">
+    <button
+      class="opcao-lista w-full text-left bg-night border border-border rounded-card px-4 py-3 hover:border-amber transition-colors">
       <span class="nome text-sm font-medium block"></span>
     </button>
   </template>
 
-<script src="./src/js/api.js"></script>
-<script src="./src/js/auth.js"></script>
-<script src="./src/js/components/header.js"></script>
-<script>
-  renderHeader({ contexto: 'root', paginaAtiva: null, largura: 'wide' });
-</script>
-<script src="./src/js/components/footer.js"></script>
-<script>
-  renderFooter({ contexto: 'root', largura: 'wide' });
-</script>
-<script src="./src/js/main.js"></script>
-<script src="./src/js/pages/home.js"></script>
+  <script src="./src/js/api.js"></script>
+  <script src="./src/js/auth.js"></script>
+  <script src="./src/js/components/header.js"></script>
+  <script>
+    renderHeader({ contexto: 'root', paginaAtiva: null, largura: 'wide' });
+  </script>
+  <script src="./src/js/components/footer.js"></script>
+  <script>
+    renderFooter({ contexto: 'root', largura: 'wide' });
+  </script>
+  <script src="./src/js/main.js"></script>
+  <script src="./src/js/pages/home.js"></script>
 
 </body>
+
 </html>

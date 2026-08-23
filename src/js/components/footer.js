@@ -11,8 +11,8 @@
 //   </script>
 // ========================================
 
-const LINK_GITHUB = 'https://github.com/arthurguerraa';
-const LINK_LINKEDIN = 'https://www.linkedin.com/in/arthurguerraa/';
+const LINK_GITHUB = "https://github.com/arthurguerraa";
+const LINK_LINKEDIN = "https://www.linkedin.com/in/arthurguerraa/";
 
 const ICONE_GITHUB = `
   <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
@@ -32,40 +32,40 @@ const ICONE_LINKEDIN = `
  *   'pages' para arquivos dentro de src/pages/.
  * @param {'wide'|'narrow'} opcoes.largura - mesma lógica usada no header.
  */
-function renderFooter({ contexto = 'pages', largura = 'narrow' } = {}) {
-  const raizIndex = contexto === 'root' ? './index.html' : '../../index.html';
-  const raizPaginas = contexto === 'root' ? './src/pages/' : './';
-  const maxWidth = largura === 'wide' ? 'max-w-5xl' : 'max-w-3xl';
+function renderFooter({ contexto = "pages", largura = "narrow" } = {}) {
+  const raizIndex = contexto === "root" ? "./index.html" : "../../index.html";
+  const raizPaginas = contexto === "root" ? "./src/pages/" : "./";
+  const maxWidth = largura === "wide" ? "max-w-5xl" : "max-w-3xl";
   const anoAtual = new Date().getFullYear();
 
   const html = `
-    <div class="${maxWidth} mx-auto px-4 sm:px-6 py-10">
+    <div class="w-full ${maxWidth} mx-auto px-4 sm:px-6 py-10 min-w-0">
       <div class="sprocket mb-8 opacity-40"></div>
 
-      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8 min-w-0">
 
-        <div>
+        <div class="min-w-0">
           <a href="${raizIndex}" class="font-display text-xl font-semibold text-cream tracking-wide">CineTrack</a>
           <p class="text-muted text-sm mt-2 max-w-xs">
             Projeto pessoal de estudo, criado para avaliar filmes e montar listas.
           </p>
         </div>
 
-        <div class="flex flex-col gap-2 text-sm">
+        <div class="flex flex-col gap-2 text-sm min-w-0">
           <span class="text-muted text-xs uppercase tracking-wide mb-1">Navegação</span>
           <a href="${raizIndex}" class="text-muted hover:text-cream transition-colors">Início</a>
           <a href="${raizPaginas}ranking.html" class="text-muted hover:text-cream transition-colors">Ranking</a>
         </div>
 
-        <div class="text-sm text-muted max-w-xs">
+        <div class="text-sm text-muted max-w-xs min-w-0 break-words">
           <span class="text-muted text-xs uppercase tracking-wide mb-1 block">Dados dos filmes</span>
           Este produto usa a API do TMDB, mas não é endossado ou certificado por ela.
-          <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-amber hover:brightness-110 transition-colors">
+          <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-amber hover:brightness-110 transition-colors inline-block break-all sm:break-normal">
             themoviedb.org
           </a>
         </div>
 
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 min-w-0">
           <span class="text-muted text-xs uppercase tracking-wide mb-1">Contato</span>
           <div class="flex items-center gap-3">
             <a href="${LINK_GITHUB}" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="text-muted hover:text-amber transition-colors">
@@ -79,12 +79,12 @@ function renderFooter({ contexto = 'pages', largura = 'narrow' } = {}) {
 
       </div>
 
-      <p class="text-muted text-xs mt-8">
+      <p class="text-muted text-xs mt-8 min-w-0">
         © ${anoAtual} CineTrack · Projeto feito por Arthur Guerra
       </p>
     </div>
   `;
 
-  const raiz = document.getElementById('footer-root');
+  const raiz = document.getElementById("footer-root");
   if (raiz) raiz.innerHTML = html;
 }

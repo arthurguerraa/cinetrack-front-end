@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minhas listas · CineTrack</title>
-<link rel="stylesheet" href="../../assets/css/output.css">
 
-<!-- api.js e auth.js carregados no head para proteger a página ANTES do conteúdo aparecer -->
-<script src="../js/api.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-  // roda imediatamente, antes do body renderizar — evita o "flash" da página
-  // para quem não está logado
-  Auth.protegerPagina();
-</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minhas listas · CineTrack</title>
+  <link rel="stylesheet" href="../../assets/css/output.css">
+
+  <!-- api.js e auth.js carregados no head para proteger a página ANTES do conteúdo aparecer -->
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    // roda imediatamente, antes do body renderizar — evita o "flash" da página
+    // para quem não está logado
+    Auth.protegerPagina();
+  </script>
 </head>
-<body class="bg-night text-cream font-sans min-h-screen flex flex-col">
+
+<body class="bg-night text-cream font-sans min-h-screen flex flex-col overflow-x-hidden">
 
   <!-- Header (renderizado dinamicamente por header.js) -->
   <header id="header-root" class="border-b border-border"></header>
 
-  <main class="max-w-3xl mx-auto px-6 py-10 flex-1">
+  <main class="w-full max-w-3xl mx-auto px-4 sm:px-6 py-10 flex-1 min-w-0">
 
-    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
-      <div>
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 min-w-0">
+      <div class="min-w-0">
         <h1 class="font-display text-3xl font-semibold mb-1">Minhas listas</h1>
         <p class="text-muted text-sm">Organize os filmes do seu jeito.</p>
       </div>
 
-      <button
-        id="btn-nova-lista"
-        class="w-full sm:w-auto shrink-0 bg-amber text-night font-semibold text-sm rounded-card px-4 py-2.5 hover:brightness-110 active:scale-[0.98] transition-all"
-      >
+      <button id="btn-nova-lista"
+        class="w-full sm:w-auto shrink-0 bg-amber text-night font-semibold text-sm rounded-card px-4 py-2.5 hover:brightness-110 active:scale-[0.98] transition-all">
         + Nova lista
       </button>
     </div>
@@ -46,7 +46,7 @@
 
     <p id="estado-erro" class="hidden text-red-400 text-sm text-center py-10"></p>
 
-    <div id="grid-listas" class="grid sm:grid-cols-2 gap-4"></div>
+    <div id="grid-listas" class="grid sm:grid-cols-2 gap-4 min-w-0"></div>
 
   </main>
 
@@ -55,19 +55,23 @@
     <article class="card-lista bg-surface border border-border rounded-card px-5 py-4 flex flex-col">
       <div class="flex items-start justify-between gap-2 mb-2">
         <h3 class="titulo font-display text-base font-semibold line-clamp-2"></h3>
-        <span class="badge-visibilidade text-[10px] font-mono uppercase tracking-wide rounded-sm px-2 py-1 shrink-0"></span>
+        <span
+          class="badge-visibilidade text-[10px] font-mono uppercase tracking-wide rounded-sm px-2 py-1 shrink-0"></span>
       </div>
 
       <p class="descricao text-muted text-sm mb-4 flex-1"></p>
 
       <div class="flex items-center gap-1.5 sm:gap-2 pt-3 border-t border-border">
-        <button class="btn-ver flex-1 min-w-0 text-center text-xs font-semibold border border-border rounded-card py-2 px-1 hover:border-amber hover:text-amber transition-colors">
+        <button
+          class="btn-ver flex-1 min-w-0 text-center text-xs font-semibold border border-border rounded-card py-2 px-1 hover:border-amber hover:text-amber transition-colors">
           Ver filmes
         </button>
-        <button class="btn-editar shrink-0 text-xs font-semibold border border-border rounded-card px-3 py-2 hover:border-amber hover:text-amber transition-colors">
+        <button
+          class="btn-editar shrink-0 text-xs font-semibold border border-border rounded-card px-3 py-2 hover:border-amber hover:text-amber transition-colors">
           Editar
         </button>
-        <button class="btn-deletar shrink-0 text-xs font-semibold border border-border rounded-card px-3 py-2 text-red-400 hover:border-red-400 transition-colors">
+        <button
+          class="btn-deletar shrink-0 text-xs font-semibold border border-border rounded-card px-3 py-2 text-red-400 hover:border-red-400 transition-colors">
           Excluir
         </button>
       </div>
@@ -77,7 +81,9 @@
   <!-- Template de filme dentro da visualização de uma lista -->
   <template id="template-filme-lista">
     <div class="filme-item flex items-center gap-3 bg-night border border-border rounded-card px-3 py-2">
-      <div class="poster w-10 h-[60px] rounded-sm bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center shrink-0"></div>
+      <div
+        class="poster w-10 h-[60px] rounded-sm bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center shrink-0">
+      </div>
       <div class="min-w-0">
         <p class="titulo text-sm font-medium truncate"></p>
         <p class="ano text-muted text-xs font-mono"></p>
@@ -91,7 +97,8 @@
 
       <div class="flex items-start justify-between mb-4">
         <h3 id="modal-lista-titulo" class="font-display text-lg font-semibold">Nova lista</h3>
-        <button id="modal-lista-fechar" class="text-muted hover:text-cream text-xl leading-none shrink-0 ml-3">&times;</button>
+        <button id="modal-lista-fechar"
+          class="text-muted hover:text-cream text-xl leading-none shrink-0 ml-3">&times;</button>
       </div>
 
       <form id="form-lista" class="space-y-4" novalidate>
@@ -99,23 +106,14 @@
 
         <div>
           <label for="lista-nome" class="block text-xs text-muted mb-1.5 font-medium">Nome</label>
-          <input
-            type="text"
-            id="lista-nome"
-            required
-            placeholder="Ex: Favoritos de 2024"
-            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors"
-          >
+          <input type="text" id="lista-nome" required placeholder="Ex: Favoritos de 2024"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors">
         </div>
 
         <div>
           <label for="lista-descricao" class="block text-xs text-muted mb-1.5 font-medium">Descrição (opcional)</label>
-          <textarea
-            id="lista-descricao"
-            rows="2"
-            placeholder="Do que se trata essa lista?"
-            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors resize-none"
-          ></textarea>
+          <textarea id="lista-descricao" rows="2" placeholder="Do que se trata essa lista?"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors resize-none"></textarea>
         </div>
 
         <label class="flex items-center gap-2 text-sm text-cream cursor-pointer">
@@ -123,13 +121,11 @@
           Tornar essa lista pública
         </label>
 
-        <p id="modal-lista-erro" class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+        <p id="modal-lista-erro"
+          class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
 
-        <button
-          type="submit"
-          id="modal-lista-btn-salvar"
-          class="w-full bg-amber text-night font-semibold text-sm rounded-card py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-        >
+        <button type="submit" id="modal-lista-btn-salvar"
+          class="w-full bg-amber text-night font-semibold text-sm rounded-card py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
           Salvar
         </button>
       </form>
@@ -142,7 +138,8 @@
 
       <div class="flex items-start justify-between gap-3 mb-4 shrink-0">
         <h3 id="modal-filmes-titulo" class="font-display text-lg font-semibold min-w-0 truncate"></h3>
-        <button id="modal-filmes-fechar" class="text-muted hover:text-cream text-xl leading-none shrink-0">&times;</button>
+        <button id="modal-filmes-fechar"
+          class="text-muted hover:text-cream text-xl leading-none shrink-0">&times;</button>
       </div>
 
       <p id="modal-filmes-vazio" class="hidden text-muted text-sm py-6 text-center">
@@ -158,10 +155,12 @@
     <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-xs text-center">
       <p class="text-sm text-cream mb-5">Tem certeza que deseja excluir essa lista? Essa ação não pode ser desfeita.</p>
       <div class="flex gap-3">
-        <button id="modal-confirmar-cancelar" class="flex-1 text-sm font-semibold border border-border rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
+        <button id="modal-confirmar-cancelar"
+          class="flex-1 text-sm font-semibold border border-border rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
           Cancelar
         </button>
-        <button id="modal-confirmar-excluir" class="flex-1 text-sm font-semibold bg-red-500 text-night rounded-card py-2 hover:brightness-110 transition-all">
+        <button id="modal-confirmar-excluir"
+          class="flex-1 text-sm font-semibold bg-red-500 text-night rounded-card py-2 hover:brightness-110 transition-all">
           Excluir
         </button>
       </div>
@@ -171,16 +170,17 @@
   <!-- Footer (renderizado dinamicamente por footer.js) -->
   <footer id="footer-root" class="border-t border-border mt-auto"></footer>
 
-<script src="../js/components/header.js"></script>
-<script>
-  renderHeader({ contexto: 'pages', paginaAtiva: 'listas', largura: 'narrow' });
-</script>
-<script src="../js/components/footer.js"></script>
-<script>
-  renderFooter({ contexto: 'pages', largura: 'narrow' });
-</script>
-<script src="../js/main.js"></script>
-<script src="../js/pages/listas.js"></script>
+  <script src="../js/components/header.js"></script>
+  <script>
+    renderHeader({ contexto: 'pages', paginaAtiva: 'listas', largura: 'narrow' });
+  </script>
+  <script src="../js/components/footer.js"></script>
+  <script>
+    renderFooter({ contexto: 'pages', largura: 'narrow' });
+  </script>
+  <script src="../js/main.js"></script>
+  <script src="../js/pages/listas.js"></script>
 
 </body>
+
 </html>
