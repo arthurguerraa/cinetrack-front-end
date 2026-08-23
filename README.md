@@ -43,7 +43,7 @@ Identidade visual inspirada em cinema — marquise, sala escura, ticket de ingre
 
 ### Componentes via JavaScript
 
-Como o projeto não usa um framework, header e footer são **gerados dinamicamente por JavaScript** e injetados em cada página — evita repetir o mesmo HTML em todo arquivo e centraliza qualquer manutenção futura num único lugar.
+Como o projeto não usa um framework, header, footer e favicon são **gerados/aplicados dinamicamente por JavaScript** em cada página — evita repetir o mesmo código em todo arquivo e centraliza qualquer manutenção futura num único lugar.
 
 ```html
 <header id="header-root"></header>
@@ -52,7 +52,17 @@ Como o projeto não usa um framework, header e footer são **gerados dinamicamen
 <script>
   renderHeader({ contexto: 'pages', paginaAtiva: 'ranking', largura: 'narrow' });
 </script>
+<script src=".../components/footer.js"></script>
+<script>
+  renderFooter({ contexto: 'pages', largura: 'narrow' });
+</script>
+<script src=".../components/favicon.js"></script>
+<script>
+  aplicarFavicon({ contexto: 'pages' });
+</script>
 ```
+
+O parâmetro `contexto` (`'root'` para `index.html` na raiz, `'pages'` para arquivos em `src/pages/`) é compartilhado pelos três componentes e ajusta os caminhos relativos automaticamente.
 
 ### Camada única de comunicação com a API
 
@@ -84,8 +94,10 @@ A listagem de filmes (populares, por gênero, ou busca) **sempre consulta o TMDB
 ```
 cinetrack-front-end/
 ├── assets/
-│   └── css/
-│       └── output.css          ← gerado pelo build do Tailwind
+│   ├── css/
+│   │   └── output.css          ← gerado pelo build do Tailwind
+│   └── images/
+│       └── android-chrome-512x512.png   ← favicon
 ├── src/
 │   ├── css/
 │   │   └── input.css            ← única fonte do design system (@theme)
@@ -95,7 +107,8 @@ cinetrack-front-end/
 │   │   ├── main.js               ← funções compartilhadas entre páginas
 │   │   ├── components/
 │   │   │   ├── header.js          ← header reutilizável (com menu mobile)
-│   │   │   └── footer.js          ← footer reutilizável
+│   │   │   ├── footer.js          ← footer reutilizável
+│   │   │   └── favicon.js         ← aplica o favicon em todas as páginas
 │   │   └── pages/
 │   │       ├── home.js
 │   │       ├── login.js
@@ -196,6 +209,7 @@ Todas as telas foram revisadas para telas pequenas (a partir de ~320px de largur
 - Modais com altura máxima e scroll interno, para não cortar conteúdo em telas curtas
 - Cabeçalhos com título + ação que empilham verticalmente em vez de espremer
 - Textos truncados (`line-clamp`, `truncate`) para evitar quebra de layout com conteúdo longo
+- Prevenção de overflow horizontal em containers flex através de `min-w-0` nos elementos que precisam encolher
 
 ---
 
