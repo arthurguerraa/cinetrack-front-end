@@ -24,6 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  // liga os dois botões de mostrar/esconder senha
+  configurarToggleSenha('senha', 'toggle-senha');
+  configurarToggleSenha('confirmar-senha', 'toggle-confirmar-senha');
+
   form.addEventListener('submit', async (evento) => {
     evento.preventDefault();
 
@@ -70,8 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       await AuthAPI.cadastrar(nome, email, senha);
-      // conta criada, mas ainda não verificada — leva para a tela de código,
-      // passando o email pela URL para não precisar pedir de novo
       window.location.href = `verificar-email.html?email=${encodeURIComponent(email)}`;
     } catch (err) {
       exibirErro(erroGeral, err.message);

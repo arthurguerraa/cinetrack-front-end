@@ -38,6 +38,30 @@ function montarHeader() {
   });
 }
 
+/**
+ * Liga o botão de mostrar/esconder senha a um campo de senha.
+ * Espera que o botão tenha dois ícones internos, com as classes
+ * '.icone-mostrar' (olho aberto, visível por padrão) e '.icone-esconder'
+ * (olho riscado, escondido por padrão) — ver exemplo de HTML no login.html.
+ */
+function configurarToggleSenha(idCampo, idBotao) {
+  const campo = document.getElementById(idCampo);
+  const botao = document.getElementById(idBotao);
+  if (!campo || !botao) return;
+
+  const iconeMostrar = botao.querySelector('.icone-mostrar');
+  const iconeEsconder = botao.querySelector('.icone-esconder');
+
+  botao.addEventListener('click', () => {
+    const estaEscondida = campo.type === 'password';
+
+    campo.type = estaEscondida ? 'text' : 'password';
+    iconeMostrar.classList.toggle('hidden', estaEscondida);
+    iconeEsconder.classList.toggle('hidden', !estaEscondida);
+    botao.setAttribute('aria-label', estaEscondida ? 'Esconder senha' : 'Mostrar senha');
+  });
+}
+
 function formatarAno(ano) {
   return ano ? String(ano) : 'Ano desconhecido';
 }

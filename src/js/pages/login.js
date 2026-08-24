@@ -1,7 +1,7 @@
 // ========================================
 // src/js/pages/login.js
 // Lógica da página de login.
-// Depende de api.js e auth.js já carregados antes deste arquivo.
+// Depende de api.js, auth.js e main.js já carregados antes deste arquivo.
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const avisoSucesso = document.getElementById('aviso-sucesso');
     if (avisoSucesso) avisoSucesso.classList.remove('hidden');
   }
+
+  // liga o botão de mostrar/esconder senha
+  configurarToggleSenha('senha', 'toggle-senha');
 
   form.addEventListener('submit', async (evento) => {
     evento.preventDefault();
@@ -59,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = '../../index.html';
     } catch (err) {
       if (err.emailNaoVerificado) {
-        // manda direto para a tela de código, já com o email preenchido
         window.location.href = `verificar-email.html?email=${encodeURIComponent(email)}`;
         return;
       }
