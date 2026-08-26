@@ -53,10 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const posicaoEl = item.querySelector('.posicao');
       const posterEl = item.querySelector('.poster');
 
-      // formata a posição como timecode: #01, #02, #03...
       posicaoEl.textContent = `#${String(posicao).padStart(2, '0')}`;
 
-      // destaque visual pro pódio (top 3) — borda âmbar e posição em destaque
       if (posicao <= 3) {
         li.classList.add('border-amber');
         posicaoEl.classList.remove('text-muted');
@@ -69,11 +67,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       item.querySelector('.titulo').textContent = filme.nm_filme;
       item.querySelector('.ano').textContent = formatarAno(filme.dt_lancamento);
-      item.querySelector('.nota').textContent = `★ ${formatarNota(filme.nota_media_usuarios)}`;
+      item.querySelector('.nota').textContent = `★ ${formatarNota(filme.nota_combinada)}`;
 
       const totalAvaliacoes = filme.total_avaliacoes;
-      item.querySelector('.total-avaliacoes').textContent =
-        `${totalAvaliacoes} ${totalAvaliacoes === 1 ? 'avaliação' : 'avaliações'}`;
+      const totalAvaliacoesEl = item.querySelector('.total-avaliacoes');
+
+      if (totalAvaliacoes > 0) {
+        totalAvaliacoesEl.textContent =
+          `${totalAvaliacoes} ${totalAvaliacoes === 1 ? 'avaliação' : 'avaliações'} · CineTrack`;
+      } else {
+        totalAvaliacoesEl.textContent = 'Nota do TMDB';
+      }
 
       listaRanking.appendChild(item);
     });
