@@ -61,12 +61,12 @@ document.addEventListener('DOMContentLoaded', () => {
         posicaoEl.classList.add('text-amber');
       }
 
-      if (filme.ds_poster) {
-        posterEl.style.backgroundImage = `url('${filme.ds_poster}')`;
+      if (filme.poster) {
+        posterEl.style.backgroundImage = `url('${filme.poster}')`;
       }
 
-      item.querySelector('.titulo').textContent = filme.nm_filme;
-      item.querySelector('.ano').textContent = formatarAno(filme.dt_lancamento);
+      item.querySelector('.titulo').textContent = filme.titulo;
+      item.querySelector('.ano').textContent = formatarAno(filme.ano);
       item.querySelector('.nota').textContent = `★ ${formatarNota(filme.nota_combinada)}`;
 
       const totalAvaliacoes = filme.total_avaliacoes;
