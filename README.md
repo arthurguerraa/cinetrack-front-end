@@ -4,7 +4,7 @@ Interface web do CineTrack, uma plataforma de avaliação de filmes onde usuári
 
 Projeto desenvolvido como estudo prático de frontend com JavaScript puro, sem frameworks — construindo desde a arquitetura de componentes até o consumo de API do zero.
 
-Consome a [CineTrack API](#) (backend em Node.js + Express + MySQL, desenvolvido em paralelo).
+Consome a [CineTrack API](#https://github.com/arthurguerraa/cinetrack-api) (backend em Node.js + Express + MySQL, desenvolvido em paralelo).
 
 ---
 
