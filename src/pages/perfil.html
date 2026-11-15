@@ -25,15 +25,32 @@
 
   <main class="w-full max-w-3xl mx-auto px-4 sm:px-6 py-10 flex-1 min-w-0">
 
-    <!-- Cartão de identificação do usuário -->
+       <!-- Cartão de identificação do usuário -->
     <section
       class="bg-surface border border-border rounded-card px-4 sm:px-6 py-6 mb-8 flex items-center gap-4 min-w-0">
-      <div class="w-14 h-14 rounded-full bg-amber/10 border border-amber/30 flex items-center justify-center shrink-0">
-        <span id="avatar-iniciais" class="font-display text-xl text-amber"></span>
+      <div
+        class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber/10 border border-amber/30 flex items-center justify-center overflow-hidden shrink-0">
+        <img id="avatar-foto" alt="Sua foto de perfil" class="hidden w-full h-full object-cover">
+        <span id="avatar-iniciais" class="font-display text-xl sm:text-2xl text-amber"></span>
       </div>
-      <div class="min-w-0">
+
+      <div class="min-w-0 flex-1">
         <h1 id="perfil-nome" class="font-display text-xl font-semibold truncate"></h1>
         <p id="perfil-email" class="text-muted text-sm truncate"></p>
+
+        <div class="flex flex-wrap items-center gap-2 mt-3">
+          <button id="btn-alterar-foto" type="button"
+            class="text-xs font-semibold border border-border rounded-card px-3 py-1.5 hover:border-amber hover:text-amber transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+            Alterar foto
+          </button>
+          <button id="btn-remover-foto" type="button"
+            class="hidden text-xs font-semibold border border-border rounded-card px-3 py-1.5 text-red-400 hover:border-red-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+            Remover
+          </button>
+          <input type="file" id="input-foto" accept="image/jpeg,image/png,image/webp" class="hidden">
+        </div>
+
+        <p id="foto-erro" class="hidden text-[13px] text-red-400 mt-2"></p>
       </div>
     </section>
 

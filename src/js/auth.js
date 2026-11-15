@@ -5,8 +5,12 @@
 // ========================================
 
 const Auth = {
+  _promessaFoto: null,
+
   salvarSessao(token) {
     localStorage.setItem('token', token);
+    // sessão nova: descarta a foto da sessão anterior, ela será buscada de novo
+    localStorage.removeItem('foto');
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
@@ -29,6 +33,43 @@ const Auth = {
     return dados ? JSON.parse(dados) : null;
   },
 
+  // ----------------------------------------
+  // Foto de perfil
+  // ----------------------------------------
+
+  /** Retorna o data URL da foto, ou null se o usuário não tem foto. */
+  fotoAtual() {
+    return localStorage.getItem('foto') || null;
+  },
+
+  /** true se já buscamos a foto no servidor nesta sessão (mesmo que não exista). */
+  fotoSincronizada() {
+    return localStorage.getItem('foto') !== null;
+  },
+
+  /** Guarda a foto localmente. Passe '' ou null para "sem foto". */
+  salvarFoto(foto) {
+    try {
+      localStorage.setItem('foto', foto || '');
+    } catch (err) {
+      console.error('Não foi possível guardar a foto localmente.', err);
+    }
+  },
+
+  /**
+   * Busca a foto no servidor e guarda no localStorage.
+   * Chamadas simultâneas compartilham a mesma requisição.
+   */
+  sincronizarFoto() {
+    if (!this._promessaFoto) {
+      this._promessaFoto = UsuariosAPI.me()
+        .then((dados) => this.salvarFoto(dados.ds_foto))
+        .catch(() => {})
+        .finally(() => { this._promessaFoto = null; });
+    }
+    return this._promessaFoto;
+  },
+
   /**
    * Calcula o caminho correto até login.html a partir da página atual.
    * O header (e o botão "Sair" dentro dele) aparece tanto na home
@@ -47,6 +88,7 @@ const Auth = {
   logout(caminhoLogin) {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
+    localStorage.removeItem('foto');
     window.location.href = caminhoLogin || this._caminhoLogin();
   },
 

@@ -7,9 +7,16 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const avatarIniciais = document.getElementById('avatar-iniciais');
+  const avatarFoto = document.getElementById('avatar-foto');
   const perfilNome = document.getElementById('perfil-nome');
   const perfilEmail = document.getElementById('perfil-email');
   const contadorAvaliacoes = document.getElementById('contador-avaliacoes');
+
+  // foto de perfil
+  const btnAlterarFoto = document.getElementById('btn-alterar-foto');
+  const btnRemoverFoto = document.getElementById('btn-remover-foto');
+  const inputFoto = document.getElementById('input-foto');
+  const fotoErro = document.getElementById('foto-erro');
 
   const listaAvaliacoes = document.getElementById('lista-avaliacoes');
   const estadoCarregando = document.getElementById('estado-carregando');
@@ -36,6 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let idParaExcluir = null;
 
+  const LADO_FOTO = 256; // px (a foto é recortada em quadrado e redimensionada)
+  const TAMANHO_MAXIMO_ARQUIVO = 10 * 1024 * 1024; // 10 MB
+
   // ----------------------------------------
   // Cartão de identificação
   // ----------------------------------------
@@ -55,6 +65,120 @@ document.addEventListener('DOMContentLoaded', () => {
 
     avatarIniciais.textContent = iniciais;
   }
+
+  // ----------------------------------------
+  // Foto de perfil
+  // ----------------------------------------
+
+  /** Mostra a foto (ou as iniciais) no cartão e atualiza o header. */
+  function atualizarAvatar(foto) {
+    if (foto) {
+      avatarFoto.src = foto;
+      avatarFoto.classList.remove('hidden');
+      avatarIniciais.classList.add('hidden');
+      btnRemoverFoto.classList.remove('hidden');
+    } else {
+      avatarFoto.removeAttribute('src');
+      avatarFoto.classList.add('hidden');
+      avatarIniciais.classList.remove('hidden');
+      btnRemoverFoto.classList.add('hidden');
+    }
+    aplicarFotoNoHeader(foto);
+  }
+
+  function definirFotoCarregando(carregando) {
+    btnAlterarFoto.disabled = carregando;
+    btnRemoverFoto.disabled = carregando;
+    btnAlterarFoto.textContent = carregando ? 'Enviando...' : 'Alterar foto';
+  }
+
+  /**
+   * Recorta a imagem em quadrado (centralizada), redimensiona para
+   * LADO_FOTO x LADO_FOTO e devolve um data URL JPEG (~20-40 KB).
+   */
+  function redimensionarImagem(arquivo) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(arquivo);
+      const img = new Image();
+
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+
+        const largura = img.naturalWidth;
+        const altura = img.naturalHeight;
+        const menorLado = Math.min(largura, altura);
+        const origemX = (largura - menorLado) / 2;
+        const origemY = (altura - menorLado) / 2;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = LADO_FOTO;
+        canvas.height = LADO_FOTO;
+
+        const ctx = canvas.getContext('2d');
+        // fundo da cor do tema, para PNGs com transparência não ficarem pretos no JPEG
+        ctx.fillStyle = '#1C1C1C';
+        ctx.fillRect(0, 0, LADO_FOTO, LADO_FOTO);
+        ctx.drawImage(img, origemX, origemY, menorLado, menorLado, 0, 0, LADO_FOTO, LADO_FOTO);
+
+        resolve(canvas.toDataURL('image/jpeg', 0.85));
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Não foi possível ler essa imagem. Tente outro arquivo (JPEG, PNG ou WebP).'));
+      };
+
+      img.src = url;
+    });
+  }
+
+  btnAlterarFoto.addEventListener('click', () => inputFoto.click());
+
+  inputFoto.addEventListener('change', async () => {
+    const arquivo = inputFoto.files[0];
+    inputFoto.value = ''; // permite escolher o mesmo arquivo de novo depois
+    if (!arquivo) return;
+
+    limparErro(fotoErro);
+
+    if (!arquivo.type.startsWith('image/')) {
+      exibirErro(fotoErro, 'Escolha um arquivo de imagem.');
+      return;
+    }
+
+    if (arquivo.size > TAMANHO_MAXIMO_ARQUIVO) {
+      exibirErro(fotoErro, 'A imagem é grande demais (máximo de 10 MB).');
+      return;
+    }
+
+    definirFotoCarregando(true);
+
+    try {
+      const fotoRedimensionada = await redimensionarImagem(arquivo);
+      await UsuariosAPI.atualizarFoto(fotoRedimensionada);
+      Auth.salvarFoto(fotoRedimensionada);
+      atualizarAvatar(fotoRedimensionada);
+    } catch (err) {
+      exibirErro(fotoErro, err.message);
+    } finally {
+      definirFotoCarregando(false);
+    }
+  });
+
+  btnRemoverFoto.addEventListener('click', async () => {
+    limparErro(fotoErro);
+    definirFotoCarregando(true);
+
+    try {
+      await UsuariosAPI.removerFoto();
+      Auth.salvarFoto('');
+      atualizarAvatar(null);
+    } catch (err) {
+      exibirErro(fotoErro, err.message);
+    } finally {
+      definirFotoCarregando(false);
+    }
+  });
 
   // ----------------------------------------
   // Estados de exibição
@@ -219,5 +343,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Inicialização
   // ----------------------------------------
   montarCartaoUsuario();
+
+  // mostra a foto em cache na hora e confirma com o servidor em seguida
+  // (cobre o caso de a foto ter sido trocada em outro dispositivo)
+  atualizarAvatar(Auth.fotoAtual());
+  Auth.sincronizarFoto().then(() => atualizarAvatar(Auth.fotoAtual()));
+
   carregarAvaliacoes();
 });

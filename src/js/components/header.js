@@ -36,6 +36,19 @@ function renderHeader({
       ? "text-amber"
       : "text-muted hover:text-cream transition-colors";
 
+  const classeAvatar =
+    paginaAtiva === "perfil"
+      ? "border-amber text-amber"
+      : "border-border text-muted hover:border-amber hover:text-amber transition-colors";
+
+  // Dentro de cada círculo ficam o ícone placeholder e a <img> da foto.
+  // montarHeader() (main.js) alterna entre os dois via aplicarFotoNoHeader().
+  const conteudoAvatar = `
+    <svg class="avatar-placeholder w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+    </svg>
+    <img class="avatar-foto hidden w-full h-full object-cover" alt="">`;
+
   const html = `
     <div class="w-full ${maxWidth} mx-auto px-4 sm:px-6 py-4 flex items-center justify-between min-w-0">
       <a href="${raizIndex}" class="font-display text-2xl font-semibold tracking-wide shrink-0">CineTrack</a>
@@ -46,9 +59,11 @@ function renderHeader({
 
         <div class="header-logado hidden items-center gap-4">
           <a href="${raizPaginas}listas.html" class="${classeLink("listas")}">Minhas listas</a>
-          <a href="${raizPaginas}perfil.html" class="${classeLink("perfil")}">Perfil</a>
-          <span class="text-muted">·</span>
-          <span class="header-nome-usuario text-cream"></span>
+          <a href="${raizPaginas}perfil.html"
+             class="header-avatar shrink-0 w-9 h-9 rounded-full bg-surface border overflow-hidden flex items-center justify-center ${classeAvatar}"
+             aria-label="Meu perfil" title="Meu perfil">
+            ${conteudoAvatar}
+          </a>
           <button class="header-btn-logout text-muted hover:text-amber transition-colors text-xs border border-border rounded-card px-3 py-1.5">
             Sair
           </button>
@@ -80,10 +95,14 @@ function renderHeader({
 
         <div class="header-logado hidden flex-col gap-3">
           <a href="${raizPaginas}listas.html" class="${classeLink("listas")}">Minhas listas</a>
-          <a href="${raizPaginas}perfil.html" class="${classeLink("perfil")}">Perfil</a>
-          <div class="flex items-center justify-between pt-3 border-t border-border">
-            <span class="header-nome-usuario text-cream"></span>
-            <button class="header-btn-logout text-muted hover:text-amber transition-colors text-xs border border-border rounded-card px-3 py-1.5">
+          <div class="flex items-center justify-between gap-3 pt-3 border-t border-border">
+            <a href="${raizPaginas}perfil.html" class="flex items-center gap-3 min-w-0 ${paginaAtiva === "perfil" ? "text-amber" : "text-cream"}">
+              <span class="header-avatar shrink-0 w-9 h-9 rounded-full bg-surface border overflow-hidden flex items-center justify-center ${classeAvatar}">
+                ${conteudoAvatar}
+              </span>
+              <span class="truncate">Meu perfil</span>
+            </a>
+            <button class="header-btn-logout shrink-0 text-muted hover:text-amber transition-colors text-xs border border-border rounded-card px-3 py-1.5">
               Sair
             </button>
           </div>

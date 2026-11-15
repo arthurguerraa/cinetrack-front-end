@@ -157,3 +157,19 @@ const ListasAPI = {
 const RankingAPI = {
   ver: (limit = 10) => apiRequest(`/ranking?limit=${limit}`),
 };
+
+
+// ----------------------------------------
+// Usuários (perfil e foto)
+// ----------------------------------------
+const UsuariosAPI = {
+  me: () => apiRequest("/usuarios/me"),
+
+  atualizarFoto: (ds_foto) =>
+    apiRequest("/usuarios/foto", {
+      method: "PUT",
+      body: JSON.stringify({ ds_foto }),
+    }),
+
+  removerFoto: () => apiRequest("/usuarios/foto", { method: "DELETE" }),
+};

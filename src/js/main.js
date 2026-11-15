@@ -5,15 +5,38 @@
 // ========================================
 
 /**
+ * Mostra a foto do usuário nos avatares do header (desktop e mobile),
+ * ou volta para o ícone placeholder quando não há foto.
+ * Também é chamada pelo perfil.js depois de trocar/remover a foto.
+ */
+function aplicarFotoNoHeader(foto) {
+  document.querySelectorAll('.header-avatar').forEach((el) => {
+    const img = el.querySelector('.avatar-foto');
+    const placeholder = el.querySelector('.avatar-placeholder');
+    if (!img || !placeholder) return;
+
+    if (foto) {
+      img.src = foto;
+      img.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+    } else {
+      img.removeAttribute('src');
+      img.classList.add('hidden');
+      placeholder.classList.remove('hidden');
+    }
+  });
+}
+
+/**
  * Monta o estado do header (login/logout) em qualquer página que use o
  * componente header.js. Como o menu mobile duplica os mesmos elementos
- * (nome do usuário, botão de sair), usamos classes em vez de ids e
+ * (avatar, botão de sair), usamos classes em vez de ids e
  * aplicamos a mudança em todas as ocorrências de uma vez.
  */
 function montarHeader() {
   const areasLogado = document.querySelectorAll('.header-logado');
   const areasDeslogado = document.querySelectorAll('.header-deslogado');
-  const nomeUsuarioEls = document.querySelectorAll('.header-nome-usuario');
+  const avatarEls = document.querySelectorAll('.header-avatar');
   const botoesLogout = document.querySelectorAll('.header-btn-logout');
 
   if (areasLogado.length === 0 && areasDeslogado.length === 0) return; // página não usa o header
@@ -25,8 +48,21 @@ function montarHeader() {
     const usuario = Auth.usuarioAtual();
     areasLogado.forEach(mostrar);
     areasDeslogado.forEach(esconder);
+
     if (usuario) {
-      nomeUsuarioEls.forEach((el) => { el.textContent = usuario.nm_usuario; });
+      avatarEls.forEach((el) => {
+        el.setAttribute('title', `Perfil de ${usuario.nm_usuario}`);
+        // No mobile o texto "Meu perfil" já descreve o link, então só o
+        // avatar desktop (que é um <a>) recebe aria-label.
+        if (el.tagName === 'A') el.setAttribute('aria-label', `Perfil de ${usuario.nm_usuario}`);
+      });
+    }
+
+    // mostra a foto que já temos e, se ainda não buscamos no servidor
+    // nesta sessão, busca agora e atualiza
+    aplicarFotoNoHeader(Auth.fotoAtual());
+    if (!Auth.fotoSincronizada()) {
+      Auth.sincronizarFoto().then(() => aplicarFotoNoHeader(Auth.fotoAtual()));
     }
   } else {
     areasLogado.forEach(esconder);
