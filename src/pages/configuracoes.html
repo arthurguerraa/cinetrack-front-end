@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurações · CineTrack</title>
+  <link rel="stylesheet" href="../../assets/css/output.css">
+  <script src="../js/components/favicon.js"></script>
+  <script>
+    aplicarFavicon({ contexto: 'pages' });
+  </script>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    Auth.protegerPagina();
+  </script>
+</head>
+
+<body class="bg-night text-cream font-sans min-h-screen flex flex-col overflow-x-hidden">
+
+  <!-- Header (renderizado dinamicamente por header.js) -->
+  <header id="header-root" class="border-b border-border"></header>
+
+  <main class="w-full max-w-3xl mx-auto px-4 sm:px-6 py-10 flex-1 min-w-0">
+
+    <a href="perfil.html" class="text-muted text-sm hover:text-cream transition-colors">&larr; Voltar ao perfil</a>
+
+    <div class="mt-4 mb-6 min-w-0">
+      <h1 class="font-display text-2xl font-semibold mb-1">Configurações da conta</h1>
+      <p class="text-muted text-sm">Gerencie seu nome, senha, email e os dados da sua conta.</p>
+    </div>
+
+    <div class="sprocket mb-8 opacity-60"></div>
+
+    <!-- ========== Nome ========== -->
+    <section class="bg-surface border border-border rounded-card px-4 sm:px-6 py-6 mb-6 min-w-0">
+      <h2 class="font-display text-lg font-semibold mb-1">Nome</h2>
+      <p class="text-muted text-sm mb-5">Como você aparece no CineTrack.</p>
+
+      <form id="form-nome" class="space-y-4" novalidate>
+        <div>
+          <label for="nome" class="block text-xs text-muted mb-1.5 font-medium">Nome</label>
+          <input type="text" id="nome" maxlength="100" autocomplete="name"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors">
+          <p id="erro-nome" class="hidden text-[13px] text-red-400 mt-1.5"></p>
+        </div>
+
+        <p id="erro-geral-nome"
+          class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+        <p id="sucesso-nome"
+          class="hidden text-[13px] text-amber bg-amber/10 border border-amber/30 rounded-card px-3 py-2"></p>
+
+        <button type="submit" id="btn-salvar-nome"
+          class="w-full sm:w-auto bg-amber text-night font-semibold text-sm rounded-card px-5 py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+          Salvar nome
+        </button>
+      </form>
+    </section>
+
+    <!-- ========== Senha ========== -->
+    <section class="bg-surface border border-border rounded-card px-4 sm:px-6 py-6 mb-6 min-w-0">
+      <h2 class="font-display text-lg font-semibold mb-1">Senha</h2>
+      <p class="text-muted text-sm mb-5">Para sua segurança, confirme a senha atual antes de criar uma nova.</p>
+
+      <form id="form-senha" class="space-y-4" novalidate>
+        <div>
+          <label for="senha-atual" class="block text-xs text-muted mb-1.5 font-medium">Senha atual</label>
+          <input type="password" id="senha-atual" autocomplete="current-password"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors">
+          <p id="erro-senha-atual" class="hidden text-[13px] text-red-400 mt-1.5"></p>
+        </div>
+
+        <div>
+          <label for="nova-senha" class="block text-xs text-muted mb-1.5 font-medium">Nova senha</label>
+          <input type="password" id="nova-senha" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors">
+          <p id="erro-nova-senha" class="hidden text-[13px] text-red-400 mt-1.5"></p>
+        </div>
+
+        <div>
+          <label for="confirmar-nova-senha" class="block text-xs text-muted mb-1.5 font-medium">Confirmar nova
+            senha</label>
+          <input type="password" id="confirmar-nova-senha" autocomplete="new-password"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors">
+          <p id="erro-confirmar-nova-senha" class="hidden text-[13px] text-red-400 mt-1.5"></p>
+        </div>
+
+        <p id="erro-geral-senha"
+          class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+        <p id="sucesso-senha"
+          class="hidden text-[13px] text-amber bg-amber/10 border border-amber/30 rounded-card px-3 py-2"></p>
+
+        <button type="submit" id="btn-salvar-senha"
+          class="w-full sm:w-auto bg-amber text-night font-semibold text-sm rounded-card px-5 py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+          Alterar senha
+        </button>
+      </form>
+    </section>
+
+    <!-- ========== Email ========== -->
+    <section class="bg-surface border border-border rounded-card px-4 sm:px-6 py-6 mb-6 min-w-0">
+      <h2 class="font-display text-lg font-semibold mb-1">Email</h2>
+      <p class="text-muted text-sm mb-5 min-w-0">
+        Email atual: <span id="email-atual" class="text-cream break-all"></span>
+      </p>
+
+      <!-- Passo 1: informar o novo email -->
+      <form id="form-email-solicitar" class="space-y-4" novalidate>
+        <div>
+          <label for="novo-email" class="block text-xs text-muted mb-1.5 font-medium">Novo email</label>
+          <input type="email" id="novo-email" autocomplete="email" placeholder="novo@email.com"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors">
+          <p id="erro-novo-email" class="hidden text-[13px] text-red-400 mt-1.5"></p>
+        </div>
+
+        <div>
+          <label for="senha-email" class="block text-xs text-muted mb-1.5 font-medium">Senha atual</label>
+          <input type="password" id="senha-email" autocomplete="current-password"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors">
+          <p id="erro-senha-email" class="hidden text-[13px] text-red-400 mt-1.5"></p>
+        </div>
+
+        <p id="erro-geral-email"
+          class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+        <p id="sucesso-email"
+          class="hidden text-[13px] text-amber bg-amber/10 border border-amber/30 rounded-card px-3 py-2"></p>
+
+        <button type="submit" id="btn-solicitar-email"
+          class="w-full sm:w-auto bg-amber text-night font-semibold text-sm rounded-card px-5 py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+          Enviar código
+        </button>
+      </form>
+
+      <!-- Passo 2: confirmar o código enviado ao novo email -->
+      <form id="form-email-confirmar" class="hidden space-y-4" novalidate>
+        <p class="text-muted text-sm">
+          Enviamos um código de 6 dígitos para
+          <span id="email-destino" class="text-cream break-all"></span>.
+          O email da conta só muda depois da confirmação.
+        </p>
+
+        <div>
+          <label class="block text-xs text-muted mb-1.5 font-medium">Código de verificação</label>
+          <div id="campos-codigo-email" class="flex justify-between gap-1.5 sm:gap-2 max-w-sm">
+            <input type="text" inputmode="numeric" maxlength="1"
+              class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-xl sm:text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+            <input type="text" inputmode="numeric" maxlength="1"
+              class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-xl sm:text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+            <input type="text" inputmode="numeric" maxlength="1"
+              class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-xl sm:text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+            <input type="text" inputmode="numeric" maxlength="1"
+              class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-xl sm:text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+            <input type="text" inputmode="numeric" maxlength="1"
+              class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-xl sm:text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+            <input type="text" inputmode="numeric" maxlength="1"
+              class="digito-codigo w-full aspect-square bg-night border border-border rounded-card text-center text-xl sm:text-2xl font-mono text-cream focus:outline-none focus:border-amber transition-colors">
+          </div>
+          <p id="erro-codigo-email" class="hidden text-[13px] text-red-400 mt-2"></p>
+        </div>
+
+        <p id="erro-geral-confirmar-email"
+          class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+        <p id="aviso-reenvio-email"
+          class="hidden text-[13px] text-amber bg-amber/10 border border-amber/30 rounded-card px-3 py-2"></p>
+
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+          <button type="submit" id="btn-confirmar-email"
+            class="w-full sm:w-auto bg-amber text-night font-semibold text-sm rounded-card px-5 py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+            Confirmar troca
+          </button>
+          <button type="button" id="btn-reenviar-email"
+            class="w-full sm:w-auto text-sm font-semibold border border-border rounded-card px-4 py-2.5 hover:border-amber hover:text-amber transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+            Reenviar código
+          </button>
+          <button type="button" id="btn-cancelar-email"
+            class="w-full sm:w-auto text-sm text-muted hover:text-cream transition-colors px-2 py-2.5">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ========== Zona de perigo ========== -->
+    <section class="border border-red-400/30 rounded-card px-4 sm:px-6 py-6 mb-6 min-w-0">
+      <h2 class="font-display text-lg font-semibold text-red-400 mb-1">Excluir conta</h2>
+      <p class="text-muted text-sm mb-5">
+        Ao excluir sua conta, suas avaliações e listas são apagadas de forma permanente. Essa ação não pode ser
+        desfeita.
+      </p>
+
+      <button type="button" id="btn-abrir-excluir"
+        class="w-full sm:w-auto text-sm font-semibold border border-red-400/40 text-red-400 rounded-card px-4 py-2.5 hover:bg-red-400/10 transition-colors">
+        Excluir minha conta
+      </button>
+    </section>
+
+  </main>
+
+  <!-- Modal: confirmar exclusão da conta -->
+  <div id="modal-excluir" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm max-h-[90vh] overflow-y-auto">
+
+      <div class="flex items-start justify-between gap-3 mb-4">
+        <h3 class="font-display text-lg font-semibold min-w-0">Excluir conta</h3>
+        <button id="modal-excluir-fechar" type="button"
+          class="text-muted hover:text-cream text-xl leading-none shrink-0">&times;</button>
+      </div>
+
+      <p class="text-sm text-cream mb-4">
+        Tem certeza? Suas avaliações e listas serão apagadas para sempre. Digite sua senha para confirmar.
+      </p>
+
+      <form id="form-excluir" class="space-y-4" novalidate>
+        <div>
+          <label for="senha-excluir" class="block text-xs text-muted mb-1.5 font-medium">Senha</label>
+          <input type="password" id="senha-excluir" autocomplete="current-password"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors">
+        </div>
+
+        <p id="erro-excluir"
+          class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+
+        <div class="flex gap-3">
+          <button type="button" id="modal-excluir-cancelar"
+            class="flex-1 text-sm font-semibold border border-border rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
+            Cancelar
+          </button>
+          <button type="submit" id="modal-excluir-confirmar"
+            class="flex-1 text-sm font-semibold bg-red-500 text-night rounded-card py-2 hover:brightness-110 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+            Excluir
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer (renderizado dinamicamente por footer.js) -->
+  <footer id="footer-root" class="border-t border-border mt-auto"></footer>
+
+  <script src="../js/components/header.js"></script>
+  <script>
+    renderHeader({ contexto: 'pages', paginaAtiva: 'configuracoes', largura: 'narrow' });
+  </script>
+  <script src="../js/components/footer.js"></script>
+  <script>
+    renderFooter({ contexto: 'pages', largura: 'narrow' });
+  </script>
+  <script src="../js/main.js"></script>
+  <script src="../js/pages/configuracoes.js"></script>
+
+</body>
+
+</html>

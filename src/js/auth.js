@@ -7,10 +7,16 @@
 const Auth = {
   _promessaFoto: null,
 
-  salvarSessao(token) {
+  /**
+   * @param {string} token
+   * @param {Object} [opcoes]
+   * @param {boolean} [opcoes.manterFoto] - true quando é o MESMO usuário com um
+   *   token renovado (troca de nome/senha/email). Em login/cadastro (sessão nova)
+   *   a foto em cache é descartada e buscada de novo.
+   */
+  salvarSessao(token, { manterFoto = false } = {}) {
     localStorage.setItem('token', token);
-    // sessão nova: descarta a foto da sessão anterior, ela será buscada de novo
-    localStorage.removeItem('foto');
+    if (!manterFoto) localStorage.removeItem('foto');
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
@@ -94,8 +100,8 @@ const Auth = {
 
   /**
    * @param {string} [caminhoLogin] - mesma lógica do logout(). As páginas
-   *   protegidas (listas.html, perfil.html) já ficam dentro de src/pages/,
-   *   então continuam podendo chamar isso sem argumento normalmente.
+   *   protegidas (listas.html, perfil.html, configuracoes.html) já ficam dentro
+   *   de src/pages/, então continuam podendo chamar isso sem argumento normalmente.
    */
   protegerPagina(caminhoLogin) {
     if (!this.estaLogado()) {

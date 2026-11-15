@@ -18,8 +18,8 @@
  * @param {Object} opcoes
  * @param {'root'|'pages'} opcoes.contexto - 'root' para o index.html na raiz do
  *   projeto, 'pages' para qualquer arquivo dentro de src/pages/.
- * @param {'ranking'|'listas'|'perfil'|null} opcoes.paginaAtiva - qual link fica
- *   destacado em âmbar.
+ * @param {'ranking'|'listas'|'perfil'|'configuracoes'|null} opcoes.paginaAtiva - qual
+ *   link fica destacado em âmbar.
  * @param {'wide'|'narrow'} opcoes.largura - largura máxima do conteúdo do header.
  */
 function renderHeader({
@@ -59,6 +59,7 @@ function renderHeader({
 
         <div class="header-logado hidden items-center gap-4">
           <a href="${raizPaginas}listas.html" class="${classeLink("listas")}">Minhas listas</a>
+          <a href="${raizPaginas}configuracoes.html" class="${classeLink("configuracoes")}">Configurações</a>
           <a href="${raizPaginas}perfil.html"
              class="header-avatar shrink-0 w-9 h-9 rounded-full bg-surface border overflow-hidden flex items-center justify-center ${classeAvatar}"
              aria-label="Meu perfil" title="Meu perfil">
@@ -95,6 +96,7 @@ function renderHeader({
 
         <div class="header-logado hidden flex-col gap-3">
           <a href="${raizPaginas}listas.html" class="${classeLink("listas")}">Minhas listas</a>
+          <a href="${raizPaginas}configuracoes.html" class="${classeLink("configuracoes")}">Configurações</a>
           <div class="flex items-center justify-between gap-3 pt-3 border-t border-border">
             <a href="${raizPaginas}perfil.html" class="flex items-center gap-3 min-w-0 ${paginaAtiva === "perfil" ? "text-amber" : "text-cream"}">
               <span class="header-avatar shrink-0 w-9 h-9 rounded-full bg-surface border overflow-hidden flex items-center justify-center ${classeAvatar}">

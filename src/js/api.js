@@ -158,9 +158,8 @@ const RankingAPI = {
   ver: (limit = 10) => apiRequest(`/ranking?limit=${limit}`),
 };
 
-
 // ----------------------------------------
-// Usuários (perfil e foto)
+// Usuários (perfil, foto e configurações da conta)
 // ----------------------------------------
 const UsuariosAPI = {
   me: () => apiRequest("/usuarios/me"),
@@ -172,4 +171,42 @@ const UsuariosAPI = {
     }),
 
   removerFoto: () => apiRequest("/usuarios/foto", { method: "DELETE" }),
+
+  // Todas as rotas abaixo devolvem { message, token } (exceto reenviar e excluir),
+  // e o token novo deve ser salvo com Auth.salvarSessao().
+  atualizarNome: (nm_usuario) =>
+    apiRequest("/usuarios/nome", {
+      method: "PUT",
+      body: JSON.stringify({ nm_usuario }),
+    }),
+
+  alterarSenha: (senha_atual, nova_senha) =>
+    apiRequest("/usuarios/senha", {
+      method: "PUT",
+      body: JSON.stringify({ senha_atual, nova_senha }),
+    }),
+
+  solicitarTrocaEmail: (novo_email, senha_atual) =>
+    apiRequest("/usuarios/email/solicitar", {
+      method: "POST",
+      body: JSON.stringify({ novo_email, senha_atual }),
+    }),
+
+  reenviarCodigoEmail: () =>
+    apiRequest("/usuarios/email/reenviar", {
+      method: "POST",
+      body: JSON.stringify({}),
+    }),
+
+  confirmarTrocaEmail: (codigo) =>
+    apiRequest("/usuarios/email/confirmar", {
+      method: "POST",
+      body: JSON.stringify({ codigo }),
+    }),
+
+  excluirConta: (senha_atual) =>
+    apiRequest("/usuarios", {
+      method: "DELETE",
+      body: JSON.stringify({ senha_atual }),
+    }),
 };
