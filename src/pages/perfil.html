@@ -25,55 +25,149 @@
 
   <main class="w-full max-w-3xl mx-auto px-4 sm:px-6 py-10 flex-1 min-w-0">
 
-           <!-- Cartão de identificação do usuário -->
-    <section
-      class="bg-surface border border-border rounded-card px-4 sm:px-6 py-6 mb-8 flex items-center gap-4 min-w-0">
-      <div
-        class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber/10 border border-amber/30 flex items-center justify-center overflow-hidden shrink-0">
-        <img id="avatar-foto" alt="Sua foto de perfil" class="hidden w-full h-full object-cover">
-        <span id="avatar-iniciais" class="font-display text-xl sm:text-2xl text-amber"></span>
-      </div>
+    <!-- Cartão de identificação do usuário -->
+    <section class="bg-surface border border-border rounded-card px-4 sm:px-6 py-6 mb-10 min-w-0">
 
-      <div class="min-w-0 flex-1">
-        <h1 id="perfil-nome" class="font-display text-xl font-semibold truncate"></h1>
-        <p id="perfil-email" class="text-muted text-sm truncate"></p>
-
-        <div class="flex flex-wrap items-center gap-2 mt-3">
-          <button id="btn-alterar-foto" type="button"
-            class="text-xs font-semibold border border-border rounded-card px-3 py-1.5 hover:border-amber hover:text-amber transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
-            Alterar foto
-          </button>
-          <button id="btn-remover-foto" type="button"
-            class="hidden text-xs font-semibold border border-border rounded-card px-3 py-1.5 text-red-400 hover:border-red-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
-            Remover
-          </button>
-          <a href="configuracoes.html"
-            class="text-xs font-semibold border border-border rounded-card px-3 py-1.5 hover:border-amber hover:text-amber transition-colors">
-            Configurações da conta
-          </a>
-          <input type="file" id="input-foto" accept="image/jpeg,image/png,image/webp" class="hidden">
+      <div class="flex items-center gap-4 min-w-0">
+        <div
+          class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber/10 border border-amber/30 flex items-center justify-center overflow-hidden shrink-0">
+          <img id="avatar-foto" alt="Sua foto de perfil" class="hidden w-full h-full object-cover">
+          <span id="avatar-iniciais" class="font-display text-xl sm:text-2xl text-amber"></span>
         </div>
 
-        <p id="foto-erro" class="hidden text-[13px] text-red-400 mt-2"></p>
+        <div class="min-w-0 flex-1">
+          <h1 id="perfil-nome" class="font-display text-xl font-semibold truncate"></h1>
+          <p id="perfil-email" class="text-muted text-sm truncate"></p>
+          <p id="perfil-membro-desde" class="hidden text-muted text-xs mt-1"></p>
+
+          <div class="flex flex-wrap items-center gap-2 mt-3">
+            <button id="btn-alterar-foto" type="button"
+              class="text-xs font-semibold border border-border rounded-card px-3 py-1.5 hover:border-amber hover:text-amber transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              Alterar foto
+            </button>
+            <button id="btn-remover-foto" type="button"
+              class="hidden text-xs font-semibold border border-border rounded-card px-3 py-1.5 text-red-400 hover:border-red-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              Remover
+            </button>
+            <a href="configuracoes.html"
+              class="text-xs font-semibold border border-border rounded-card px-3 py-1.5 hover:border-amber hover:text-amber transition-colors">
+              Configurações da conta
+            </a>
+            <input type="file" id="input-foto" accept="image/jpeg,image/png,image/webp" class="hidden">
+          </div>
+
+          <p id="foto-erro" class="hidden text-[13px] text-red-400 mt-2"></p>
+        </div>
+      </div>
+
+      <!-- Bio (só aparece depois que o perfil carrega do servidor) -->
+      <div id="bio-bloco" class="hidden mt-5 pt-5 border-t border-border min-w-0">
+
+        <div id="bio-visualizacao">
+          <p id="perfil-bio" class="text-sm break-words whitespace-pre-line"></p>
+          <button id="btn-editar-bio" type="button"
+            class="mt-3 text-xs font-semibold border border-border rounded-card px-3 py-1.5 hover:border-amber hover:text-amber transition-colors">
+          </button>
+        </div>
+
+        <form id="form-bio" class="hidden space-y-3" novalidate>
+          <label for="bio" class="block text-xs text-muted font-medium">Bio</label>
+          <textarea id="bio" rows="3" maxlength="160" placeholder="Ex.: fã de ficção científica e cinema dos anos 80"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors resize-none"></textarea>
+
+          <div class="flex items-start justify-between gap-3">
+            <p id="erro-bio" class="hidden text-[13px] text-red-400 min-w-0"></p>
+            <span id="bio-contador" class="shrink-0 ml-auto text-xs font-mono text-muted">0/160</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button type="submit" id="btn-salvar-bio"
+              class="bg-amber text-night font-semibold text-xs rounded-card px-4 py-2 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+              Salvar bio
+            </button>
+            <button type="button" id="btn-cancelar-bio"
+              class="text-xs text-muted hover:text-cream transition-colors px-2 py-2">
+              Cancelar
+            </button>
+          </div>
+        </form>
       </div>
     </section>
 
-    <div class="mb-6 min-w-0">
-      <h2 class="font-display text-2xl font-semibold mb-1">Minhas avaliações</h2>
-      <p class="text-muted text-sm" id="contador-avaliacoes"></p>
-    </div>
+    <!-- ========== Resumo das listas ========== -->
+    <section class="mb-10 min-w-0">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 min-w-0">
+        <div class="min-w-0">
+          <h2 class="font-display text-2xl font-semibold mb-1">Minhas listas</h2>
+          <p class="text-muted text-sm" id="contador-listas"></p>
+        </div>
+        <a id="link-gerenciar-listas" href="listas.html"
+          class="shrink-0 self-start sm:self-auto text-xs font-semibold border border-border rounded-card px-3 py-1.5 hover:border-amber hover:text-amber transition-colors">
+          Gerenciar listas
+        </a>
+      </div>
 
-    <div class="sprocket mb-8 opacity-60"></div>
+      <div class="sprocket mb-8 opacity-60"></div>
 
-    <p id="estado-carregando" class="hidden text-muted text-sm text-center py-10">Carregando suas avaliações...</p>
+      <p id="listas-estado-carregando" class="hidden text-muted text-sm text-center py-6">Carregando suas listas...</p>
 
-    <p id="estado-vazio" class="hidden text-muted text-sm text-center py-10">
-      Você ainda não avaliou nenhum filme. Busca um título e conta o que achou.
-    </p>
+      <p id="listas-estado-vazio" class="hidden text-muted text-sm text-center py-6">
+        Você ainda não criou nenhuma lista. Crie uma para organizar os filmes que quer ver.
+      </p>
 
-    <p id="estado-erro" class="hidden text-red-400 text-sm text-center py-10"></p>
+      <p id="listas-estado-erro" class="hidden text-red-400 text-sm text-center py-6"></p>
 
-    <div id="lista-avaliacoes" class="w-full space-y-3 min-w-0"></div>
+      <div id="resumo-listas" class="grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0"></div>
+
+      <a id="listas-ver-todas" href="listas.html"
+        class="hidden mt-4 inline-block text-xs text-amber hover:brightness-110 font-medium"></a>
+    </section>
+
+    <!-- ========== Histórico de avaliações ========== -->
+    <section class="min-w-0">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 min-w-0">
+        <div class="min-w-0">
+          <h2 class="font-display text-2xl font-semibold mb-1">Minhas avaliações</h2>
+          <p class="text-muted text-sm" id="contador-avaliacoes"></p>
+        </div>
+
+        <div id="controle-ordem" class="hidden">
+          <div class="flex items-center gap-2">
+            <label for="seletor-ordem" class="text-xs text-muted font-medium shrink-0">Ordenar por</label>
+            <select id="seletor-ordem"
+              class="min-w-0 bg-night border border-border rounded-card px-3 py-2 text-sm text-cream focus:outline-none focus:border-amber transition-colors">
+              <option value="recentes">Mais recentes</option>
+              <option value="antigas">Mais antigas</option>
+              <option value="maior_nota">Maior nota</option>
+              <option value="menor_nota">Menor nota</option>
+              <option value="titulo">Título (A–Z)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="sprocket mb-8 opacity-60"></div>
+
+      <p id="estado-carregando" class="hidden text-muted text-sm text-center py-10">Carregando suas avaliações...</p>
+
+      <p id="estado-vazio" class="hidden text-muted text-sm text-center py-10">
+        Você ainda não avaliou nenhum filme. Busca um título e conta o que achou.
+      </p>
+
+      <p id="estado-erro" class="hidden text-red-400 text-sm text-center py-10"></p>
+
+      <div id="lista-avaliacoes" class="w-full space-y-3 min-w-0"></div>
+
+      <!-- Rodapé do histórico: progresso + "Carregar mais" -->
+      <div id="rodape-avaliacoes" class="hidden mt-6 flex flex-col items-center gap-3">
+        <p id="texto-progresso" class="text-muted text-xs font-mono"></p>
+        <p id="erro-carregar-mais" class="hidden text-[13px] text-red-400 text-center"></p>
+        <button id="btn-carregar-mais" type="button"
+          class="hidden text-sm font-semibold border border-border rounded-card px-5 py-2 hover:border-amber hover:text-amber transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+          Carregar mais
+        </button>
+      </div>
+    </section>
 
   </main>
 
@@ -103,6 +197,18 @@
           </button>
         </div>
       </div>
+    </article>
+  </template>
+
+  <!-- Template de item do resumo de listas -->
+  <template id="template-lista-resumo">
+    <article class="item-lista bg-surface border border-border rounded-card p-4 min-w-0">
+      <div class="flex items-start justify-between gap-3">
+        <h3 class="nome font-display text-base font-semibold truncate min-w-0"></h3>
+        <span class="visibilidade shrink-0 text-[11px] font-semibold border rounded-card px-2 py-0.5"></span>
+      </div>
+      <p class="descricao text-muted text-sm line-clamp-2 mt-1"></p>
+      <p class="total font-mono text-xs text-amber mt-3"></p>
     </article>
   </template>
 

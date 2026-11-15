@@ -159,10 +159,16 @@ const RankingAPI = {
 };
 
 // ----------------------------------------
-// Usuários (perfil, foto e configurações da conta)
+// Usuários (perfil, bio, foto e configurações da conta)
 // ----------------------------------------
 const UsuariosAPI = {
   me: () => apiRequest("/usuarios/me"),
+
+  atualizarBio: (ds_bio) =>
+    apiRequest("/usuarios/bio", {
+      method: "PUT",
+      body: JSON.stringify({ ds_bio }),
+    }),
 
   atualizarFoto: (ds_foto) =>
     apiRequest("/usuarios/foto", {
@@ -171,6 +177,17 @@ const UsuariosAPI = {
     }),
 
   removerFoto: () => apiRequest("/usuarios/foto", { method: "DELETE" }),
+
+  // Histórico de avaliações paginado por offset.
+  // ordem: recentes | antigas | maior_nota | menor_nota | titulo
+  // Resposta: { data: [...], pagination: { total, limit, offset, hasMore } }
+  minhasAvaliacoes: ({ limit = 10, offset = 0, ordem = "recentes" } = {}) =>
+    apiRequest(
+      `/usuarios/me/avaliacoes?limit=${limit}&offset=${offset}&ordem=${encodeURIComponent(ordem)}`,
+    ),
+
+  // Listas do usuário, cada uma com total_filmes
+  minhasListas: () => apiRequest("/usuarios/me/listas"),
 
   // Todas as rotas abaixo devolvem { message, token } (exceto reenviar e excluir),
   // e o token novo deve ser salvo com Auth.salvarSessao().
