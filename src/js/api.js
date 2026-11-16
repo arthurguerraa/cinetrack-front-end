@@ -148,7 +148,17 @@ const ListasAPI = {
       body: JSON.stringify({ id_lista, id_filme }),
     }),
 
+  // Resposta: { lista, is_dono, duracoes_pendentes, filmes: [...] }
   verFilmes: (id_lista) => apiRequest(`/listas/${id_lista}/filmes`),
+
+  removerFilme: (id_lista, id_filme) =>
+    apiRequest(`/listas/${id_lista}/filmes/${id_filme}`, { method: "DELETE" }),
+
+  marcarAssistido: (id_lista, id_filme, is_assistido) =>
+    apiRequest(`/listas/${id_lista}/filmes/${id_filme}/assistido`, {
+      method: "PUT",
+      body: JSON.stringify({ is_assistido }),
+    }),
 };
 
 // ----------------------------------------

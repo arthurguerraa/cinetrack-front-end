@@ -66,10 +66,10 @@
       <p class="descricao text-muted text-sm mb-4 flex-1"></p>
 
       <div class="flex items-center gap-1.5 sm:gap-2 pt-3 border-t border-border">
-        <button
+        <a href="#"
           class="btn-ver flex-1 min-w-0 text-center text-xs font-semibold border border-border rounded-card py-2 px-1 hover:border-amber hover:text-amber transition-colors">
           Ver filmes
-        </button>
+        </a>
         <button
           class="btn-editar shrink-0 text-xs font-semibold border border-border rounded-card px-3 py-2 hover:border-amber hover:text-amber transition-colors">
           Editar
@@ -80,19 +80,6 @@
         </button>
       </div>
     </article>
-  </template>
-
-  <!-- Template de filme dentro da visualização de uma lista -->
-  <template id="template-filme-lista">
-    <div class="filme-item flex items-center gap-3 bg-night border border-border rounded-card px-3 py-2">
-      <div
-        class="poster w-10 h-[60px] rounded-sm bg-gradient-to-br from-[#2a2624] to-[#1C1C1C] bg-cover bg-center shrink-0">
-      </div>
-      <div class="min-w-0">
-        <p class="titulo text-sm font-medium truncate"></p>
-        <p class="ano text-muted text-xs font-mono"></p>
-      </div>
-    </div>
   </template>
 
   <!-- Modal: criar / editar lista -->
@@ -133,24 +120,6 @@
           Salvar
         </button>
       </form>
-    </div>
-  </div>
-
-  <!-- Modal: ver filmes da lista -->
-  <div id="modal-filmes" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
-    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-md max-h-[85vh] flex flex-col">
-
-      <div class="flex items-start justify-between gap-3 mb-4 shrink-0">
-        <h3 id="modal-filmes-titulo" class="font-display text-lg font-semibold min-w-0 truncate"></h3>
-        <button id="modal-filmes-fechar"
-          class="text-muted hover:text-cream text-xl leading-none shrink-0">&times;</button>
-      </div>
-
-      <p id="modal-filmes-vazio" class="hidden text-muted text-sm py-6 text-center">
-        Essa lista ainda não tem filmes. Busca um título pra adicionar.
-      </p>
-
-      <div id="modal-filmes-lista" class="space-y-2 overflow-y-auto"></div>
     </div>
   </div>
 

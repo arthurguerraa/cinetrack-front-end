@@ -3,6 +3,7 @@
 // Lógica da página de listas do usuário.
 // Depende de api.js, auth.js e main.js já carregados antes deste arquivo.
 // A proteção de rota (Auth.protegerPagina) já rodou no <head> do listas.html.
+// Os filmes de cada lista são exibidos na página lista-detalhe.html.
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const estadoErro = document.getElementById('estado-erro');
 
   const templateCardLista = document.getElementById('template-card-lista');
-  const templateFilmeLista = document.getElementById('template-filme-lista');
 
   const btnNovaLista = document.getElementById('btn-nova-lista');
 
@@ -27,13 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const listaVisibilidade = document.getElementById('lista-visibilidade');
   const modalListaErro = document.getElementById('modal-lista-erro');
   const modalListaBtnSalvar = document.getElementById('modal-lista-btn-salvar');
-
-  // modal ver filmes
-  const modalFilmes = document.getElementById('modal-filmes');
-  const modalFilmesTitulo = document.getElementById('modal-filmes-titulo');
-  const modalFilmesFechar = document.getElementById('modal-filmes-fechar');
-  const modalFilmesLista = document.getElementById('modal-filmes-lista');
-  const modalFilmesVazio = document.getElementById('modal-filmes-vazio');
 
   // modal confirmar exclusão
   const modalConfirmar = document.getElementById('modal-confirmar');
@@ -102,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ...(publica ? ['bg-amber/10', 'text-amber'] : ['bg-border', 'text-muted'])
       );
 
-      card.querySelector('.btn-ver').addEventListener('click', () => abrirModalFilmes(lista));
+      card.querySelector('.btn-ver').href = `lista-detalhe.html?id=${lista.id_lista}`;
       card.querySelector('.btn-editar').addEventListener('click', () => abrirModalLista(lista));
       card.querySelector('.btn-deletar').addEventListener('click', () => abrirConfirmacao(lista.id_lista));
 
@@ -175,51 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
       modalListaBtnSalvar.disabled = false;
       modalListaBtnSalvar.textContent = 'Salvar';
     }
-  });
-
-  // ----------------------------------------
-  // Modal ver filmes
-  // ----------------------------------------
-  async function abrirModalFilmes(lista) {
-    modalFilmesTitulo.textContent = lista.nm_lista;
-    modalFilmesLista.innerHTML = '';
-    modalFilmesVazio.classList.add('hidden');
-    modalFilmes.classList.remove('hidden');
-    modalFilmes.classList.add('flex');
-
-    try {
-      const resultado = await ListasAPI.verFilmes(lista.id_lista);
-      const filmes = resultado.filmes || [];
-
-      if (filmes.length === 0) {
-        modalFilmesVazio.classList.remove('hidden');
-        return;
-      }
-
-      filmes.forEach((filme) => {
-        const item = templateFilmeLista.content.cloneNode(true);
-
-        const posterEl = item.querySelector('.poster');
-        if (filme.ds_poster) posterEl.style.backgroundImage = `url('${filme.ds_poster}')`;
-
-        item.querySelector('.titulo').textContent = filme.nm_filme;
-        item.querySelector('.ano').textContent = formatarAno(filme.dt_lancamento);
-
-        modalFilmesLista.appendChild(item);
-      });
-    } catch (err) {
-      modalFilmesLista.innerHTML = `<p class="text-red-400 text-sm text-center py-6">${err.message}</p>`;
-    }
-  }
-
-  function fecharModalFilmes() {
-    modalFilmes.classList.add('hidden');
-    modalFilmes.classList.remove('flex');
-  }
-
-  modalFilmesFechar.addEventListener('click', fecharModalFilmes);
-  modalFilmes.addEventListener('click', (evento) => {
-    if (evento.target === modalFilmes) fecharModalFilmes();
   });
 
   // ----------------------------------------

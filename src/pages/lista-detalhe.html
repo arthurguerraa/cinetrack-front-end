@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista · CineTrack</title>
+  <link rel="stylesheet" href="../../assets/css/output.css">
+  <script src="../js/components/favicon.js"></script>
+  <script>
+    aplicarFavicon({ contexto: 'pages' });
+  </script>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    Auth.protegerPagina();
+  </script>
+</head>
+
+<body class="bg-night text-cream font-sans min-h-screen flex flex-col overflow-x-hidden">
+
+  <!-- Header (renderizado dinamicamente por header.js) -->
+  <header id="header-root" class="border-b border-border"></header>
+
+  <main class="w-full max-w-5xl mx-auto px-4 sm:px-6 py-10 flex-1 min-w-0">
+
+    <a id="link-voltar" href="listas.html" class="text-muted text-sm hover:text-cream transition-colors">
+      &larr; Minhas listas
+    </a>
+
+    <!-- Cabeçalho "ingresso" da lista -->
+    <section id="cabecalho-lista" class="hidden relative bg-surface border border-border rounded-card mt-4 mb-8 min-w-0">
+
+      <div class="px-4 sm:px-6 py-3 flex items-center justify-between gap-3 min-w-0">
+        <p id="lista-rotulo"
+          class="font-mono text-[11px] uppercase tracking-[0.2em] text-amber truncate min-w-0"></p>
+        <span id="lista-badge"
+          class="text-[10px] font-mono uppercase tracking-wide rounded-sm px-2 py-1 shrink-0"></span>
+      </div>
+
+      <!-- picote do ingresso -->
+      <div class="relative border-t border-dashed border-border">
+        <span class="absolute -left-2 -top-2 w-4 h-4 rounded-full bg-night border border-border"></span>
+        <span class="absolute -right-2 -top-2 w-4 h-4 rounded-full bg-night border border-border"></span>
+      </div>
+
+      <div class="px-4 sm:px-6 py-6 min-w-0">
+        <h1 id="lista-nome" class="font-display text-3xl font-semibold mb-2 break-words"></h1>
+        <p id="lista-descricao" class="text-muted text-sm mb-5 break-words"></p>
+
+        <p id="lista-meta" class="font-mono text-xs text-muted mb-3"></p>
+
+        <div id="bloco-progresso" class="hidden mb-5">
+          <progress id="progresso" value="0" max="1"
+            class="w-full h-1.5 appearance-none rounded-full overflow-hidden bg-border [&::-webkit-progress-bar]:bg-border [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:bg-amber [&::-webkit-progress-value]:rounded-full [&::-moz-progress-bar]:bg-amber"></progress>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <button id="btn-sortear" type="button"
+            class="hidden w-full sm:w-auto bg-amber text-night font-semibold text-sm rounded-card px-5 py-2.5 hover:brightness-110 active:scale-[0.98] transition-all">
+            Sortear um filme
+          </button>
+          <button id="btn-editar-lista" type="button"
+            class="hidden w-full sm:w-auto text-sm font-semibold border border-border rounded-card px-4 py-2.5 hover:border-amber hover:text-amber transition-colors">
+            Editar lista
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Destaque do sorteio -->
+    <div id="destaque-sorteio"
+      class="hidden border border-amber/40 bg-amber/10 rounded-card px-4 py-3 mb-6 flex-col sm:flex-row sm:items-center sm:justify-between gap-3 min-w-0">
+      <div class="min-w-0">
+        <p id="destaque-rotulo" class="font-mono text-[11px] uppercase tracking-[0.2em] text-amber mb-1"></p>
+        <p id="destaque-titulo" class="font-display text-lg font-semibold break-words"></p>
+      </div>
+      <div class="flex gap-2 shrink-0">
+        <button id="btn-sortear-outro" type="button"
+          class="text-xs font-semibold border border-amber/40 text-amber rounded-card px-3 py-1.5 hover:bg-amber/10 transition-colors">
+          Sortear outro
+        </button>
+        <button id="btn-fechar-destaque" type="button"
+          class="text-xs text-muted hover:text-cream transition-colors px-2 py-1.5">
+          Fechar
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtro + ordenação -->
+    <div id="controles" class="hidden mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 min-w-0">
+
+        <div id="filtro-assistido" class="hidden min-w-0">
+          <div class="flex flex-wrap gap-2">
+            <button type="button" data-filtro="todos"
+              class="pill-filtro text-xs font-medium rounded-card border px-3 py-1.5 transition-colors bg-surface text-muted border-border"></button>
+            <button type="button" data-filtro="pendentes"
+              class="pill-filtro text-xs font-medium rounded-card border px-3 py-1.5 transition-colors bg-surface text-muted border-border"></button>
+            <button type="button" data-filtro="assistidos"
+              class="pill-filtro text-xs font-medium rounded-card border px-3 py-1.5 transition-colors bg-surface text-muted border-border"></button>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 min-w-0 sm:ml-auto">
+          <label for="seletor-ordem" class="text-xs text-muted font-medium shrink-0">Ordenar por</label>
+          <select id="seletor-ordem"
+            class="min-w-0 bg-night border border-border rounded-card px-3 py-2 text-sm text-cream focus:outline-none focus:border-amber transition-colors">
+            <option value="adicionados_antigos">Adicionados há mais tempo</option>
+            <option value="adicionados_recentes">Adicionados recentemente</option>
+            <option value="maior_nota">Maior nota</option>
+            <option value="menor_nota">Menor nota</option>
+            <option value="lancamento_antigos">Lançamento: mais antigos</option>
+            <option value="lancamento_recentes">Lançamento: mais recentes</option>
+            <option value="duracao_curta">Duração: mais curtos</option>
+            <option value="duracao_longa">Duração: mais longos</option>
+            <option value="titulo">Título (A–Z)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="sprocket mb-8 opacity-60"></div>
+
+    <!-- Estados -->
+    <p id="estado-carregando" class="hidden text-muted text-sm text-center py-10">Carregando a lista...</p>
+
+    <div id="estado-vazio" class="hidden text-center py-10">
+      <p class="text-muted text-sm mb-4">Essa lista ainda está vazia. Busque um filme e toque no + para adicioná-lo.</p>
+      <a id="link-buscar-filmes" href="../../index.html"
+        class="inline-block text-xs font-semibold border border-border rounded-card px-4 py-2 hover:border-amber hover:text-amber transition-colors">
+        Buscar filmes
+      </a>
+    </div>
+
+    <p id="estado-filtro-vazio" class="hidden text-muted text-sm text-center py-10"></p>
+
+    <p id="estado-erro" class="hidden text-red-400 text-sm text-center py-10"></p>
+
+    <p id="erro-acao"
+      class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2 mb-4"></p>
+
+    <!-- Grid de filmes (mesmo layout da home) -->
+    <section id="grid-filmes" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5 min-w-0"></section>
+
+  </main>
+
+  <!-- Template de card de filme da lista -->
+  <template id="template-card-filme">
+    <article class="card-filme bg-surface border border-border rounded-card overflow-hidden flex flex-col">
+      <div class="relative">
+        <div class="poster aspect-2/3 bg-linear-to-br from-[#2a2624] to-surface bg-cover bg-center"></div>
+        <span
+          class="badge-assistido hidden absolute top-2 left-2 bg-night/90 border border-amber/40 text-amber text-[10px] font-mono uppercase tracking-wide rounded-sm px-2 py-1">
+          Assistido
+        </span>
+      </div>
+      <div class="border-t border-dashed border-border px-3 sm:px-4 py-3 flex-1 flex flex-col">
+        <h3 class="titulo font-display text-sm font-semibold leading-snug mb-2 line-clamp-2"></h3>
+        <div class="flex items-center justify-between text-xs font-mono text-muted mb-1">
+          <span class="nota text-amber"></span>
+          <span class="ano"></span>
+        </div>
+        <p class="duracao text-xs font-mono text-muted mb-3"></p>
+        <div class="acoes mt-auto flex gap-1.5 sm:gap-2">
+          <button type="button"
+            class="btn-assistido flex-1 min-w-0 border text-xs font-semibold rounded-card py-2 px-1 text-center transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+          </button>
+          <button type="button"
+            class="btn-remover shrink-0 border border-border text-muted text-xs font-semibold rounded-card px-2.5 hover:border-red-400 hover:text-red-400 transition-colors"
+            title="Remover da lista" aria-label="Remover da lista">
+            &times;
+          </button>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <!-- Modal: editar lista -->
+  <div id="modal-lista" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-sm max-h-[90vh] overflow-y-auto">
+
+      <div class="flex items-start justify-between mb-4">
+        <h3 class="font-display text-lg font-semibold">Editar lista</h3>
+        <button id="modal-lista-fechar" type="button"
+          class="text-muted hover:text-cream text-xl leading-none shrink-0 ml-3">&times;</button>
+      </div>
+
+      <form id="form-lista" class="space-y-4" novalidate>
+        <div>
+          <label for="lista-nome-input" class="block text-xs text-muted mb-1.5 font-medium">Nome</label>
+          <input type="text" id="lista-nome-input" required
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors">
+        </div>
+
+        <div>
+          <label for="lista-descricao-input" class="block text-xs text-muted mb-1.5 font-medium">Descrição
+            (opcional)</label>
+          <textarea id="lista-descricao-input" rows="2"
+            class="w-full bg-night border border-border rounded-card px-4 py-2.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:border-amber transition-colors resize-none"></textarea>
+        </div>
+
+        <label class="flex items-center gap-2 text-sm text-cream cursor-pointer">
+          <input type="checkbox" id="lista-visibilidade-input" class="accent-amber w-4 h-4 shrink-0">
+          Tornar essa lista pública
+        </label>
+
+        <p id="modal-lista-erro"
+          class="hidden text-[13px] text-red-400 bg-red-400/10 border border-red-400/30 rounded-card px-3 py-2"></p>
+
+        <button type="submit" id="modal-lista-btn-salvar"
+          class="w-full bg-amber text-night font-semibold text-sm rounded-card py-2.5 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+          Salvar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: confirmar remoção de filme -->
+  <div id="modal-remover" class="hidden fixed inset-0 bg-night/80 flex items-center justify-center px-6 z-50">
+    <div class="bg-surface border border-border rounded-card px-6 py-6 w-full max-w-xs text-center">
+      <p class="text-sm text-cream mb-5">
+        Remover <span id="modal-remover-titulo" class="font-semibold break-words"></span> desta lista?
+      </p>
+      <div class="flex gap-3">
+        <button id="modal-remover-cancelar" type="button"
+          class="flex-1 text-sm font-semibold border border-border rounded-card py-2 hover:border-amber hover:text-amber transition-colors">
+          Cancelar
+        </button>
+        <button id="modal-remover-confirmar" type="button"
+          class="flex-1 text-sm font-semibold bg-red-500 text-night rounded-card py-2 hover:brightness-110 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+          Remover
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer (renderizado dinamicamente por footer.js) -->
+  <footer id="footer-root" class="border-t border-border mt-auto"></footer>
+
+  <script src="../js/components/header.js"></script>
+  <script>
+    renderHeader({ contexto: 'pages', paginaAtiva: 'listas', largura: 'wide' });
+  </script>
+  <script src="../js/components/footer.js"></script>
+  <script>
+    renderFooter({ contexto: 'pages', largura: 'wide' });
+  </script>
+  <script src="../js/main.js"></script>
+  <script src="../js/pages/lista-detalhe.js"></script>
+
+</body>
+
+</html>
