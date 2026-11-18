@@ -88,25 +88,35 @@
       </div>
     </div>
 
-    <!-- Filtro + ordenação -->
-    <div id="controles" class="hidden mb-6">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 min-w-0">
+        <!-- Filtros + ordenação -->
+    <div id="controles" class="hidden mb-6 space-y-4">
 
-        <div id="filtro-assistido" class="hidden min-w-0">
-          <div class="flex flex-wrap gap-2">
-            <button type="button" data-filtro="todos"
-              class="pill-filtro text-xs font-medium rounded-card border px-3 py-1.5 transition-colors bg-surface text-muted border-border"></button>
-            <button type="button" data-filtro="pendentes"
-              class="pill-filtro text-xs font-medium rounded-card border px-3 py-1.5 transition-colors bg-surface text-muted border-border"></button>
-            <button type="button" data-filtro="assistidos"
-              class="pill-filtro text-xs font-medium rounded-card border px-3 py-1.5 transition-colors bg-surface text-muted border-border"></button>
+      <div id="filtro-assistido" class="hidden min-w-0">
+        <div class="flex flex-wrap gap-2">
+          <button type="button" data-filtro="todos"
+            class="pill-filtro text-xs font-medium rounded-card border px-3 py-1.5 transition-colors bg-surface text-muted border-border"></button>
+          <button type="button" data-filtro="pendentes"
+            class="pill-filtro text-xs font-medium rounded-card border px-3 py-1.5 transition-colors bg-surface text-muted border-border"></button>
+          <button type="button" data-filtro="assistidos"
+            class="pill-filtro text-xs font-medium rounded-card border px-3 py-1.5 transition-colors bg-surface text-muted border-border"></button>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 min-w-0">
+
+        <div id="bloco-genero" class="hidden min-w-0">
+          <div class="flex items-center gap-2 min-w-0">
+            <label for="seletor-genero" class="text-xs text-muted font-medium shrink-0">Gênero</label>
+            <select id="seletor-genero"
+              class="flex-1 sm:flex-none min-w-0 bg-night border border-border rounded-card px-3 py-2 text-sm text-cream focus:outline-none focus:border-amber transition-colors">
+            </select>
           </div>
         </div>
 
         <div class="flex items-center gap-2 min-w-0 sm:ml-auto">
           <label for="seletor-ordem" class="text-xs text-muted font-medium shrink-0">Ordenar por</label>
           <select id="seletor-ordem"
-            class="min-w-0 bg-night border border-border rounded-card px-3 py-2 text-sm text-cream focus:outline-none focus:border-amber transition-colors">
+            class="flex-1 sm:flex-none min-w-0 bg-night border border-border rounded-card px-3 py-2 text-sm text-cream focus:outline-none focus:border-amber transition-colors">
             <option value="adicionados_antigos">Adicionados há mais tempo</option>
             <option value="adicionados_recentes">Adicionados recentemente</option>
             <option value="maior_nota">Maior nota</option>
@@ -118,6 +128,7 @@
             <option value="titulo">Título (A–Z)</option>
           </select>
         </div>
+
       </div>
     </div>
 
@@ -146,7 +157,7 @@
 
   </main>
 
-  <!-- Template de card de filme da lista -->
+    <!-- Template de card de filme da lista -->
   <template id="template-card-filme">
     <article class="card-filme bg-surface border border-border rounded-card overflow-hidden flex flex-col">
       <div class="relative">
@@ -162,7 +173,8 @@
           <span class="nota text-amber"></span>
           <span class="ano"></span>
         </div>
-        <p class="duracao text-xs font-mono text-muted mb-3"></p>
+        <p class="duracao text-xs font-mono text-muted mb-1"></p>
+        <p class="generos text-[11px] text-muted mb-3 truncate"></p>
         <div class="acoes mt-auto flex gap-1.5 sm:gap-2">
           <button type="button"
             class="btn-assistido flex-1 min-w-0 border text-xs font-semibold rounded-card py-2 px-1 text-center transition-colors disabled:opacity-60 disabled:cursor-not-allowed">

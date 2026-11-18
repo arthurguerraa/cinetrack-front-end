@@ -4,7 +4,7 @@
 // Depende de api.js, auth.js e main.js já carregados antes deste arquivo.
 // A proteção de rota já rodou no <head> do lista-detalhe.html.
 //
-// Toda a lista é carregada de uma vez; filtro, ordenação e sorteio
+// Toda a lista é carregada de uma vez; filtros, ordenação e sorteio
 // acontecem no navegador, sem novas requisições.
 // ========================================
 
@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const controles = $('controles');
   const filtroAssistido = $('filtro-assistido');
   const pillsFiltro = Array.from(document.querySelectorAll('.pill-filtro'));
+  const blocoGenero = $('bloco-genero');
+  const seletorGenero = $('seletor-genero');
   const seletorOrdem = $('seletor-ordem');
 
   // estados e grid
@@ -73,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   const TENTATIVAS_DURACAO = 6; // quantas vezes consultar de novo enquanto as durações são buscadas
   const INTERVALO_DURACAO_MS = 2500;
+  const GENEROS_POR_CARD = 3;
 
   let lista = null;
   let filmes = [];
@@ -80,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let duracoesPendentes = 0;
 
   let filtro = 'todos'; // 'todos' | 'pendentes' | 'assistidos'
+  let generoFiltro = 'todos'; // 'todos' ou o nome de um gênero
   let ordem = 'adicionados_antigos';
   let idSorteado = null;
   let filmeParaRemover = null;
@@ -100,8 +104,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function normalizarFilme(filme) {
-    return { ...filme, is_assistido: Boolean(filme.is_assistido) };
+    return {
+      ...filme,
+      is_assistido: Boolean(filme.is_assistido),
+      generos: Array.isArray(filme.generos) ? filme.generos : [],
+    };
   }
+
+  const temGenero = (filme) => generoFiltro === 'todos' || filme.generos.includes(generoFiltro);
 
   // ----------------------------------------
   // Ordenação
@@ -138,10 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   function filmesVisiveis() {
-    let resultado = filmes;
+    let resultado = filmes.filter(temGenero);
 
-    if (ehDono && filtro === 'pendentes') resultado = filmes.filter((f) => !f.is_assistido);
-    if (ehDono && filtro === 'assistidos') resultado = filmes.filter((f) => f.is_assistido);
+    if (ehDono && filtro === 'pendentes') resultado = resultado.filter((f) => !f.is_assistido);
+    if (ehDono && filtro === 'assistidos') resultado = resultado.filter((f) => f.is_assistido);
 
     const comparar = COMPARADORES[ordem] || COMPARADORES.adicionados_antigos;
     return [...resultado].sort((a, b) => comparar(a, b) || porTitulo(a, b) || a.id_filme - b.id_filme);
@@ -170,6 +180,18 @@ document.addEventListener('DOMContentLoaded', () => {
     controles.classList.add('hidden');
     estadoErro.textContent = mensagem;
     estadoErro.classList.remove('hidden');
+  }
+
+  function mensagemSemResultado() {
+    if (generoFiltro !== 'todos') {
+      if (ehDono && filtro === 'pendentes') return `Nenhum filme de ${generoFiltro} para assistir nesta lista.`;
+      if (ehDono && filtro === 'assistidos') return `Você ainda não assistiu nenhum filme de ${generoFiltro} desta lista.`;
+      return `Nenhum filme de ${generoFiltro} nesta lista.`;
+    }
+
+    return filtro === 'pendentes'
+      ? 'Você já assistiu todos os filmes desta lista.'
+      : 'Você ainda não marcou nenhum filme como assistido.';
   }
 
   // ----------------------------------------
@@ -228,6 +250,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /**
+   * Monta o seletor de gênero só com os gêneros que existem na lista, com a contagem
+   * de filmes de cada um. Se o gênero escolhido deixou de existir (ex.: o último filme
+   * dele foi removido), volta para "todos".
+   */
+  function atualizarOpcoesGenero() {
+    const contagem = new Map();
+    filmes.forEach((filme) => {
+      filme.generos.forEach((genero) => contagem.set(genero, (contagem.get(genero) || 0) + 1));
+    });
+
+    const nomes = [...contagem.keys()].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+    if (generoFiltro !== 'todos' && !contagem.has(generoFiltro)) generoFiltro = 'todos';
+
+    seletorGenero.innerHTML = '';
+    seletorGenero.add(new Option('Todos os gêneros', 'todos'));
+    nomes.forEach((nome) => seletorGenero.add(new Option(`${nome} (${contagem.get(nome)})`, nome)));
+    seletorGenero.value = generoFiltro;
+
+    // sem nenhum gênero cadastrado nos filmes, não há o que filtrar
+    blocoGenero.classList.toggle('hidden', nomes.length === 0);
+  }
+
   // ----------------------------------------
   // Cards
   // ----------------------------------------
@@ -245,6 +291,14 @@ document.addEventListener('DOMContentLoaded', () => {
     card.querySelector('.nota').textContent = `★ ${nota ? formatarNota(nota) : '—'}`;
     card.querySelector('.ano').textContent = formatarAno(filme.dt_lancamento);
     card.querySelector('.duracao').textContent = formatarDuracao(filme.nr_duracao);
+
+    const generosEl = card.querySelector('.generos');
+    if (filme.generos.length > 0) {
+      generosEl.textContent = filme.generos.slice(0, GENEROS_POR_CARD).join(' · ');
+      generosEl.title = filme.generos.join(', ');
+    } else {
+      generosEl.classList.add('hidden');
+    }
 
     if (filme.id_filme === idSorteado) artigo.classList.add('ring-2', 'ring-amber');
 
@@ -274,6 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderizar() {
     esconderEstados();
     gridFilmes.innerHTML = '';
+    atualizarOpcoesGenero();
     atualizarResumo();
 
     const temFilmes = filmes.length > 0;
@@ -289,10 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const visiveis = filmesVisiveis();
 
     if (visiveis.length === 0) {
-      estadoFiltroVazio.textContent =
-        filtro === 'pendentes'
-          ? 'Você já assistiu todos os filmes desta lista.'
-          : 'Você ainda não marcou nenhum filme como assistido.';
+      estadoFiltroVazio.textContent = mensagemSemResultado();
       estadoFiltroVazio.classList.remove('hidden');
       return;
     }
@@ -355,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------
-  // Filtro e ordenação
+  // Filtros e ordenação
   // ----------------------------------------
   pillsFiltro.forEach((pill) => {
     pill.addEventListener('click', () => {
@@ -364,13 +416,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  seletorGenero.addEventListener('change', () => {
+    generoFiltro = seletorGenero.value;
+    fecharDestaque(); // o filme sorteado pode não pertencer ao novo gênero
+    renderizar();
+  });
+
   seletorOrdem.addEventListener('change', () => {
     ordem = seletorOrdem.value;
     renderizar();
   });
 
   // ----------------------------------------
-  // Sorteio
+  // Sorteio (respeita o gênero escolhido)
   // ----------------------------------------
   function mostrarDestaque(rotulo, titulo, podeSortearOutro) {
     destaqueRotulo.textContent = rotulo;
@@ -388,12 +446,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function sortear() {
-    const candidatosBase = ehDono ? filmes.filter((f) => !f.is_assistido) : filmes;
+    const doGenero = filmes.filter(temGenero);
+    const candidatosBase = ehDono ? doGenero.filter((f) => !f.is_assistido) : doGenero;
 
     if (candidatosBase.length === 0) {
       idSorteado = null;
       renderizar();
-      mostrarDestaque('Nada para sortear', 'Você já assistiu todos os filmes desta lista.', false);
+      mostrarDestaque(
+        'Nada para sortear',
+        generoFiltro !== 'todos'
+          ? `Você já assistiu todos os filmes de ${generoFiltro} desta lista.`
+          : 'Você já assistiu todos os filmes desta lista.',
+        false
+      );
       return;
     }
 
@@ -408,7 +473,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (filtro === 'assistidos') filtro = 'todos';
 
     renderizar();
-    mostrarDestaque('Sorteado para você', escolhido.nm_filme, candidatosBase.length > 1);
+    mostrarDestaque(
+      generoFiltro !== 'todos' ? `Sorteado em ${generoFiltro}` : 'Sorteado para você',
+      escolhido.nm_filme,
+      candidatosBase.length > 1
+    );
 
     const card = gridFilmes.querySelector(`[data-id="${escolhido.id_filme}"]`);
     if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -547,8 +616,3 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   carregarLista();
 });
-
-
-
-
-
