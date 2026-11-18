@@ -104,7 +104,7 @@ function formatarAno(ano) {
 
 function formatarNota(nota) {
   const numero = parseFloat(nota);
-  return Number.isFinite(numero) ? numero.toFixed(1) : '—';
+  return Number.isFinite(numero) && numero > 0 ? numero.toFixed(1) : '—';
 }
 
 function truncarTexto(texto, limite = 140) {
