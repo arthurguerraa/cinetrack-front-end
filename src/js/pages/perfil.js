@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function renderizarResumoListas(listas) {
+    function renderizarResumoListas(listas) {
     const total = listas.length;
 
     resumoListas.innerHTML = '';
@@ -367,6 +367,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     listas.slice(0, LISTAS_VISIVEIS).forEach((lista) => {
       const item = templateListaResumo.content.cloneNode(true);
+
+      // o card inteiro leva para a página da lista
+      item.querySelector('.item-lista').href = `lista-detalhe.html?id=${lista.id_lista}`;
 
       item.querySelector('.nome').textContent = lista.nm_lista;
 

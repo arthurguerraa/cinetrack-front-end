@@ -201,15 +201,20 @@
   </template>
 
   <!-- Template de item do resumo de listas -->
+    <!-- Template de item do resumo de listas (o card inteiro é um link para a lista) -->
   <template id="template-lista-resumo">
-    <article class="item-lista bg-surface border border-border rounded-card p-4 min-w-0">
+    <a href="#"
+      class="item-lista group block bg-surface border border-border rounded-card p-4 min-w-0 hover:border-amber transition-colors">
       <div class="flex items-start justify-between gap-3">
-        <h3 class="nome font-display text-base font-semibold truncate min-w-0"></h3>
+        <h3 class="nome font-display text-base font-semibold truncate min-w-0 group-hover:text-amber transition-colors"></h3>
         <span class="visibilidade shrink-0 text-[11px] font-semibold border rounded-card px-2 py-0.5"></span>
       </div>
       <p class="descricao text-muted text-sm line-clamp-2 mt-1"></p>
-      <p class="total font-mono text-xs text-amber mt-3"></p>
-    </article>
+      <div class="flex items-center justify-between gap-3 mt-3">
+        <p class="total font-mono text-xs text-amber"></p>
+        <span class="shrink-0 text-xs text-muted group-hover:text-amber transition-colors" aria-hidden="true">Abrir &rarr;</span>
+      </div>
+    </a>
   </template>
 
   <!-- Modal: editar avaliação -->

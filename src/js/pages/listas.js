@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function renderizarListas(listas) {
+    function renderizarListas(listas) {
     limparEstados();
 
     if (!listas || listas.length === 0) {
@@ -84,8 +84,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     listas.forEach((lista) => {
       const card = templateCardLista.content.cloneNode(true);
+      const urlLista = `lista-detalhe.html?id=${lista.id_lista}`;
 
-      card.querySelector('.titulo').textContent = lista.nm_lista;
+      const titulo = card.querySelector('.titulo');
+      titulo.textContent = lista.nm_lista;
+      titulo.href = urlLista; // link esticado: o card inteiro leva para a lista
+
       card.querySelector('.descricao').textContent = lista.ds_lista || 'Sem descrição.';
 
       const badge = card.querySelector('.badge-visibilidade');
@@ -95,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ...(publica ? ['bg-amber/10', 'text-amber'] : ['bg-border', 'text-muted'])
       );
 
-      card.querySelector('.btn-ver').href = `lista-detalhe.html?id=${lista.id_lista}`;
+      card.querySelector('.btn-ver').href = urlLista;
       card.querySelector('.btn-editar').addEventListener('click', () => abrirModalLista(lista));
       card.querySelector('.btn-deletar').addEventListener('click', () => abrirConfirmacao(lista.id_lista));
 

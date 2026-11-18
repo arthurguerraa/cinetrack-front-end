@@ -55,17 +55,22 @@
   </main>
 
   <!-- Template de card de lista -->
+    <!-- Template de card de lista (o card inteiro é clicável pelo link esticado do título) -->
   <template id="template-card-lista">
-    <article class="card-lista bg-surface border border-border rounded-card px-5 py-4 flex flex-col">
+    <article
+      class="card-lista group relative bg-surface border border-border rounded-card px-5 py-4 flex flex-col hover:border-amber transition-colors">
       <div class="flex items-start justify-between gap-2 mb-2">
-        <h3 class="titulo font-display text-base font-semibold line-clamp-2"></h3>
+        <h3 class="font-display text-base font-semibold line-clamp-2 min-w-0">
+          <a href="#"
+            class="titulo group-hover:text-amber transition-colors after:absolute after:inset-0"></a>
+        </h3>
         <span
           class="badge-visibilidade text-[10px] font-mono uppercase tracking-wide rounded-sm px-2 py-1 shrink-0"></span>
       </div>
 
       <p class="descricao text-muted text-sm mb-4 flex-1"></p>
 
-      <div class="flex items-center gap-1.5 sm:gap-2 pt-3 border-t border-border">
+      <div class="relative z-10 flex items-center gap-1.5 sm:gap-2 pt-3 border-t border-border">
         <a href="#"
           class="btn-ver flex-1 min-w-0 text-center text-xs font-semibold border border-border rounded-card py-2 px-1 hover:border-amber hover:text-amber transition-colors">
           Ver filmes
