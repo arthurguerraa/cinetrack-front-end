@@ -9,8 +9,9 @@
 //   - 'genero'    — um gênero selecionado, sem busca
 //   - 'busca'     — termo digitado na busca
 //
-// O estado atual (modo + termo/gênero + página) fica sincronizado com a
-// URL (?q=...&genero=...&page=...), para sobreviver a um F5 e permitir
+// Em qualquer modo o usuário pode escolher uma ordenação. O estado atual
+// (modo + termo/gênero + ordem + página) fica sincronizado com a URL
+// (?q=...&genero=...&ordem=...&page=...), para sobreviver a um F5 e permitir
 // compartilhar o link de uma busca específica.
 // ========================================
 
@@ -19,6 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const campoBusca = document.getElementById('campo-busca');
   const btnBuscar = document.getElementById('btn-buscar');
   const filtroGeneros = document.getElementById('filtro-generos');
+  const seletorOrdem = document.getElementById('seletor-ordem');
+  const ordemAviso = document.getElementById('ordem-aviso');
 
   const gridFilmes = document.getElementById('grid-filmes');
   const estadoCarregando = document.getElementById('estado-carregando');
@@ -61,7 +64,22 @@ document.addEventListener('DOMContentLoaded', () => {
   let modoAtual = 'populares'; // 'populares' | 'genero' | 'busca'
   let generoSelecionado = null;
   let termoBusca = null;
+  let ordemAtual = 'padrao'; // 'padrao' ou uma das opções do seletor
   let paginaAtual = 1;
+
+  // o rótulo da opção "padrão" muda conforme o que o TMDB entrega em cada modo
+  const ROTULOS_ORDEM_PADRAO = {
+    populares: 'Em alta na semana',
+    genero: 'Mais populares',
+    busca: 'Mais relevantes',
+  };
+
+  const ORDENS_VALIDAS = Array.from(seletorOrdem.options).map((opcao) => opcao.value);
+
+  function atualizarRotuloOrdemPadrao() {
+    const opcao = seletorOrdem.querySelector('option[value="padrao"]');
+    if (opcao) opcao.textContent = ROTULOS_ORDEM_PADRAO[modoAtual];
+  }
 
   // ----------------------------------------
   // Sincronização com a URL
@@ -70,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const q = params.get('q');
     const genero = params.get('genero');
+    const ordem = params.get('ordem');
     const page = parseInt(params.get('page')) || 1;
 
     if (q) {
@@ -86,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       termoBusca = null;
     }
 
+    ordemAtual = ORDENS_VALIDAS.includes(ordem) ? ordem : 'padrao';
     paginaAtual = page;
   }
 
@@ -93,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams();
     if (modoAtual === 'busca' && termoBusca) params.set('q', termoBusca);
     if (modoAtual === 'genero' && generoSelecionado) params.set('genero', generoSelecionado);
+    if (ordemAtual !== 'padrao') params.set('ordem', ordemAtual);
     if (paginaAtual > 1) params.set('page', paginaAtual);
 
     const query = params.toString();
@@ -109,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('popstate', () => {
     lerEstadoDaURL();
     campoBusca.value = termoBusca || '';
+    seletorOrdem.value = ordemAtual;
     atualizarPillsGenero();
     carregarConformeModo({ atualizarUrlComPush: false });
   });
@@ -217,6 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   async function carregarConformeModo({ atualizarUrlComPush = true } = {}) {
     mostrarCarregando();
+    atualizarRotuloOrdemPadrao();
+    limparErro(ordemAviso);
     atualizarURL({ push: atualizarUrlComPush });
     btnBuscar.disabled = true;
 
@@ -224,21 +248,35 @@ document.addEventListener('DOMContentLoaded', () => {
       let resposta;
 
       if (modoAtual === 'busca') {
-        resposta = await FilmesAPI.buscar(termoBusca, paginaAtual);
+        resposta = await FilmesAPI.buscar(termoBusca, paginaAtual, ordemAtual);
       } else if (modoAtual === 'genero') {
-        resposta = await FilmesAPI.porGenero(generoSelecionado, paginaAtual);
+        resposta = await FilmesAPI.porGenero(generoSelecionado, paginaAtual, ordemAtual);
       } else {
-        resposta = await FilmesAPI.populares(paginaAtual);
+        resposta = await FilmesAPI.populares(paginaAtual, ordemAtual);
       }
 
       renderizarFilmes(resposta.data);
       atualizarPaginacao(resposta.pagination);
+
+      // quando o TMDB não consegue ordenar todos os resultados, avisa que a ordem vale só para esta página
+      if (resposta.ordenacao === 'pagina' && resposta.data.length > 0) {
+        exibirErro(ordemAviso, 'A ordenação vale só para os filmes desta página.');
+      }
     } catch (err) {
       mostrarErro(err.message);
     } finally {
       btnBuscar.disabled = false;
     }
   }
+
+  // ----------------------------------------
+  // Ordenação
+  // ----------------------------------------
+  seletorOrdem.addEventListener('change', () => {
+    ordemAtual = seletorOrdem.value;
+    paginaAtual = 1;
+    carregarConformeModo();
+  });
 
   // ----------------------------------------
   // Busca por termo
@@ -447,6 +485,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   lerEstadoDaURL();
   campoBusca.value = termoBusca || '';
+  seletorOrdem.value = ordemAtual;
+  atualizarRotuloOrdemPadrao();
 
   carregarGeneros().then(atualizarPillsGenero);
   carregarConformeModo({ atualizarUrlComPush: false });

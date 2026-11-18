@@ -35,6 +35,23 @@
 
       <!-- Filtro de gêneros -->
       <div id="filtro-generos" class="flex flex-wrap gap-2 mt-4 min-w-0"></div>
+
+            <!-- Ordenação -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-4 min-w-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <label for="seletor-ordem" class="text-xs text-muted font-medium shrink-0">Ordenar por</label>
+          <select id="seletor-ordem"
+            class="flex-1 sm:flex-none min-w-0 bg-night border border-border rounded-card px-3 py-2 text-sm text-cream focus:outline-none focus:border-amber transition-colors">
+            <option value="padrao">Em alta na semana</option>
+            <option value="maior_nota">Maior nota</option>
+            <option value="menor_nota">Menor nota</option>
+            <option value="lancamento_recentes">Lançamento: mais recentes</option>
+            <option value="lancamento_antigos">Lançamento: mais antigos</option>
+            <option value="titulo">Título (A–Z)</option>
+          </select>
+        </div>
+        <p id="ordem-aviso" class="hidden text-xs text-muted"></p>
+      </div>
     </section>
 
     <div class="sprocket mb-8 opacity-60"></div>

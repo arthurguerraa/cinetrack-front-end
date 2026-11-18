@@ -79,17 +79,22 @@ const AuthAPI = {
 
 // ----------------------------------------
 // Filmes
+// ordem: padrao | maior_nota | menor_nota | lancamento_recentes | lancamento_antigos | titulo
+// Resposta: { data, pagination, ordenacao } — ordenacao: 'padrao' | 'global' | 'pagina'
 // ----------------------------------------
 const FilmesAPI = {
-  populares: (page = 1) => apiRequest(`/filmes/populares?page=${page}`),
+  populares: (page = 1, ordem = "padrao") =>
+    apiRequest(`/filmes/populares?page=${page}&ordem=${encodeURIComponent(ordem)}`),
 
-  porGenero: (genero, page = 1) =>
+  porGenero: (genero, page = 1, ordem = "padrao") =>
     apiRequest(
-      `/filmes/genero?nome=${encodeURIComponent(genero)}&page=${page}`,
+      `/filmes/genero?nome=${encodeURIComponent(genero)}&page=${page}&ordem=${encodeURIComponent(ordem)}`,
     ),
 
-  buscar: (termo, page = 1) =>
-    apiRequest(`/filmes/buscar?q=${encodeURIComponent(termo)}&page=${page}`),
+  buscar: (termo, page = 1, ordem = "padrao") =>
+    apiRequest(
+      `/filmes/buscar?q=${encodeURIComponent(termo)}&page=${page}&ordem=${encodeURIComponent(ordem)}`,
+    ),
 };
 
 // ----------------------------------------
