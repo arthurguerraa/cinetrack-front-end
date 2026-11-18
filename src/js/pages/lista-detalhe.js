@@ -117,8 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ordenação
   // ----------------------------------------
   const tempoAdicionado = (f) => new Date(f.dt_adicionado).getTime() || null;
-  const notaDe = (f) => {
-    const n = parseFloat(f.nr_nota_media);
+    const notaDe = (f) => {
+    const n = parseFloat(f.nota_combinada ?? f.nr_nota_media);
     return Number.isFinite(n) && n > 0 ? n : null;
   };
 
@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   // Cards
   // ----------------------------------------
-  function criarCard(filme) {
+    function criarCard(filme) {
     const card = templateCard.content.cloneNode(true);
     const artigo = card.querySelector('.card-filme');
     artigo.dataset.id = filme.id_filme;
@@ -288,7 +288,12 @@ document.addEventListener('DOMContentLoaded', () => {
     card.querySelector('.titulo').textContent = filme.nm_filme;
 
     const nota = notaDe(filme);
-    card.querySelector('.nota').textContent = `★ ${nota ? formatarNota(nota) : '—'}`;
+    const notaEl = card.querySelector('.nota');
+    notaEl.textContent = `★ ${nota ? formatarNota(nota) : '—'}`;
+    notaEl.title = filme.total_avaliacoes > 0
+      ? `Combina a nota do TMDB com ${filme.total_avaliacoes} ${filme.total_avaliacoes === 1 ? 'avaliação' : 'avaliações'} do CineTrack`
+      : 'Nota do TMDB';
+
     card.querySelector('.ano').textContent = formatarAno(filme.dt_lancamento);
     card.querySelector('.duracao').textContent = formatarDuracao(filme.nr_duracao);
 

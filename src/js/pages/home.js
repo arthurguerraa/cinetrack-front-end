@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   // Renderização do grid
   // ----------------------------------------
-  function renderizarFilmes(filmes) {
+    function renderizarFilmes(filmes) {
     limparEstados();
 
     if (!filmes || filmes.length === 0) {
@@ -224,7 +224,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (poster) posterEl.style.backgroundImage = `url('${poster}')`;
 
       card.querySelector('.titulo').textContent = titulo;
-      card.querySelector('.nota').textContent = `★ ${formatarNota(nota)}`;
+
+      const notaEl = card.querySelector('.nota');
+      notaEl.textContent = `★ ${formatarNota(nota)}`;
+      notaEl.title = filme.total_avaliacoes > 0
+        ? `Combina a nota do TMDB com ${filme.total_avaliacoes} ${filme.total_avaliacoes === 1 ? 'avaliação' : 'avaliações'} do CineTrack`
+        : 'Nota do TMDB';
+
       card.querySelector('.ano').textContent = formatarAno(ano);
 
       card.querySelector('.btn-avaliar').addEventListener('click', () => abrirModalAvaliar(id, titulo));
@@ -259,8 +265,15 @@ document.addEventListener('DOMContentLoaded', () => {
       atualizarPaginacao(resposta.pagination);
 
       // quando o TMDB não consegue ordenar todos os resultados, avisa que a ordem vale só para esta página
+           // quando o TMDB não consegue ordenar todos os resultados, avisa que a ordem vale só para esta página
       if (resposta.ordenacao === 'pagina' && resposta.data.length > 0) {
-        exibirErro(ordemAviso, 'A ordenação vale só para os filmes desta página.');
+        const porNota = ordemAtual === 'maior_nota' || ordemAtual === 'menor_nota';
+        exibirErro(
+          ordemAviso,
+          porNota
+            ? 'A ordenação vale só para os filmes desta página. Filmes com poucos votos aparecem no fim.'
+            : 'A ordenação vale só para os filmes desta página.'
+        );
       }
     } catch (err) {
       mostrarErro(err.message);
@@ -491,3 +504,4 @@ document.addEventListener('DOMContentLoaded', () => {
   carregarGeneros().then(atualizarPillsGenero);
   carregarConformeModo({ atualizarUrlComPush: false });
 });
+
