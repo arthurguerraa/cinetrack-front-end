@@ -6,6 +6,10 @@
 //
 // Toda a lista é carregada de uma vez; filtros, ordenação e sorteio
 // acontecem no navegador, sem novas requisições.
+//
+// "Assistido" não é uma marcação à parte: um filme conta como assistido quando o dono
+// da lista tem uma avaliação dele (minha_avaliacao). Avaliar marca como assistido;
+// remover a avaliação devolve o filme para "para assistir".
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -70,6 +74,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalRemoverCancelar = $('modal-remover-cancelar');
   const modalRemoverConfirmar = $('modal-remover-confirmar');
 
+  // modal avaliar filme
+  const modalAvaliar = $('modal-avaliar');
+  const modalAvaliarFechar = $('modal-avaliar-fechar');
+  const modalAvaliarRotulo = $('modal-avaliar-rotulo');
+  const modalAvaliarTitulo = $('modal-avaliar-titulo');
+  const formAvaliar = $('form-avaliar');
+  const avaliarNota = $('avaliar-nota');
+  const avaliarComentario = $('avaliar-comentario');
+  const modalAvaliarAviso = $('modal-avaliar-aviso');
+  const modalAvaliarErro = $('modal-avaliar-erro');
+  const modalAvaliarSalvar = $('modal-avaliar-salvar');
+  const modalAvaliarRemover = $('modal-avaliar-remover');
+
   // ----------------------------------------
   // Estado
   // ----------------------------------------
@@ -87,6 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let ordem = 'adicionados_antigos';
   let idSorteado = null;
   let filmeParaRemover = null;
+  let filmeParaAvaliar = null;
+  let confirmandoRemocaoAvaliacao = false;
 
   // ----------------------------------------
   // Utilitários
@@ -107,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return {
       ...filme,
       is_assistido: Boolean(filme.is_assistido),
+      minha_avaliacao: filme.minha_avaliacao || null,
       generos: Array.isArray(filme.generos) ? filme.generos : [],
     };
   }
@@ -117,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ordenação
   // ----------------------------------------
   const tempoAdicionado = (f) => new Date(f.dt_adicionado).getTime() || null;
-    const notaDe = (f) => {
+  const notaDe = (f) => {
     const n = parseFloat(f.nota_combinada ?? f.nr_nota_media);
     return Number.isFinite(n) && n > 0 ? n : null;
   };
@@ -191,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     return filtro === 'pendentes'
       ? 'Você já assistiu todos os filmes desta lista.'
-      : 'Você ainda não marcou nenhum filme como assistido.';
+      : 'Você ainda não assistiu nenhum filme desta lista. Avalie um filme para marcá-lo como assistido.';
   }
 
   // ----------------------------------------
@@ -277,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   // Cards
   // ----------------------------------------
-    function criarCard(filme) {
+  function criarCard(filme) {
     const card = templateCard.content.cloneNode(true);
     const artigo = card.querySelector('.card-filme');
     artigo.dataset.id = filme.id_filme;
@@ -313,18 +333,21 @@ document.addEventListener('DOMContentLoaded', () => {
       return card;
     }
 
-    const btnAssistido = card.querySelector('.btn-assistido');
-    if (filme.is_assistido) {
+    const btnAvaliar = card.querySelector('.btn-avaliar');
+    const minha = filme.minha_avaliacao;
+
+    if (minha) {
       posterEl.classList.add('opacity-50');
       card.querySelector('.badge-assistido').classList.remove('hidden');
-      btnAssistido.textContent = '✓ Assistido';
-      btnAssistido.classList.add('border-amber/40', 'bg-amber/10', 'text-amber');
+      btnAvaliar.textContent = `★ Sua nota: ${formatarNota(minha.nr_nota)}`;
+      btnAvaliar.title = 'Editar sua avaliação';
+      btnAvaliar.classList.add('border-amber/40', 'bg-amber/10', 'text-amber');
     } else {
-      btnAssistido.textContent = 'Já assisti';
-      btnAssistido.classList.add('border-border', 'text-cream', 'hover:border-amber', 'hover:text-amber');
+      btnAvaliar.textContent = 'Avaliar';
+      btnAvaliar.classList.add('border-border', 'text-cream', 'hover:border-amber', 'hover:text-amber');
     }
 
-    btnAssistido.addEventListener('click', () => alternarAssistido(filme, btnAssistido));
+    btnAvaliar.addEventListener('click', () => abrirModalAvaliar(filme));
     card.querySelector('.btn-remover').addEventListener('click', () => abrirModalRemover(filme));
 
     return card;
@@ -360,16 +383,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   // Carregar a lista
   // ----------------------------------------
+  function aplicarResposta(resposta) {
+    lista = resposta.lista;
+    ehDono = Boolean(resposta.is_dono);
+    filmes = resposta.filmes.map(normalizarFilme);
+    duracoesPendentes = resposta.duracoes_pendentes || 0;
+  }
+
   async function carregarLista() {
     mostrarCarregando();
 
     try {
-      const resposta = await ListasAPI.verFilmes(idLista);
-
-      lista = resposta.lista;
-      ehDono = Boolean(resposta.is_dono);
-      filmes = resposta.filmes.map(normalizarFilme);
-      duracoesPendentes = resposta.duracoes_pendentes || 0;
+      aplicarResposta(await ListasAPI.verFilmes(idLista));
 
       renderizarCabecalho();
       renderizar();
@@ -377,6 +402,22 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       mostrarErro(err.message);
     }
+  }
+
+  /**
+   * Recarrega os filmes sem mostrar o estado de "carregando" (usado depois de avaliar ou
+   * remover uma avaliação). Traz a avaliação com o id novo, a nota combinada atualizada e o
+   * que mais tiver mudado no servidor, mantendo filtros e ordenação como estão.
+   */
+  async function atualizarFilmes() {
+    aplicarResposta(await ListasAPI.verFilmes(idLista));
+
+    // o filme sorteado já foi avaliado (ou saiu da lista): o destaque perde o sentido
+    const sorteado = filmes.find((f) => f.id_filme === idSorteado);
+    if (!sorteado || sorteado.is_assistido) fecharDestaque();
+
+    renderizarCabecalho();
+    renderizar();
   }
 
   /**
@@ -493,27 +534,125 @@ document.addEventListener('DOMContentLoaded', () => {
   btnFecharDestaque.addEventListener('click', fecharDestaque);
 
   // ----------------------------------------
-  // Marcar como assistido
+  // Avaliar filme (marca como assistido automaticamente)
   // ----------------------------------------
-  async function alternarAssistido(filme, botao) {
-    limparErro(erroAcao);
-    botao.disabled = true;
+  function restaurarBotaoRemoverAvaliacao() {
+    confirmandoRemocaoAvaliacao = false;
+    modalAvaliarRemover.textContent = 'Remover avaliação';
+  }
 
-    const novoValor = !filme.is_assistido;
+  function abrirModalAvaliar(filme) {
+    filmeParaAvaliar = filme;
+    const existente = filme.minha_avaliacao;
+
+    limparErro(modalAvaliarErro);
+    restaurarBotaoRemoverAvaliacao();
+
+    modalAvaliarRotulo.textContent = existente ? 'Editando sua avaliação' : 'Avaliando';
+    modalAvaliarTitulo.textContent = filme.nm_filme;
+    avaliarNota.value = existente ? existente.nr_nota : '';
+    avaliarComentario.value = existente ? existente.ds_comentario || '' : '';
+    modalAvaliarSalvar.textContent = existente ? 'Salvar alterações' : 'Salvar avaliação';
+
+    modalAvaliarRemover.classList.toggle('hidden', !existente);
+    modalAvaliarAviso.classList.toggle('hidden', !existente);
+
+    modalAvaliar.classList.remove('hidden');
+    modalAvaliar.classList.add('flex');
+    avaliarNota.focus();
+  }
+
+  function fecharModalAvaliar() {
+    filmeParaAvaliar = null;
+    restaurarBotaoRemoverAvaliacao();
+    modalAvaliar.classList.add('hidden');
+    modalAvaliar.classList.remove('flex');
+  }
+
+  /** Depois de gravar no servidor, fecha o modal e atualiza a lista na tela. */
+  async function finalizarAvaliacao() {
+    fecharModalAvaliar();
 
     try {
-      await ListasAPI.marcarAssistido(idLista, filme.id_filme, novoValor);
-      filme.is_assistido = novoValor;
-
-      // o filme sorteado já foi assistido: o destaque perde o sentido
-      if (novoValor && filme.id_filme === idSorteado) fecharDestaque();
-
-      renderizar();
+      await atualizarFilmes();
     } catch (err) {
-      exibirErro(erroAcao, err.message);
-      botao.disabled = false;
+      exibirErro(erroAcao, 'A avaliação foi salva, mas não foi possível atualizar a lista. Recarregue a página.');
     }
   }
+
+  modalAvaliarFechar.addEventListener('click', fecharModalAvaliar);
+  modalAvaliar.addEventListener('click', (evento) => {
+    if (evento.target === modalAvaliar) fecharModalAvaliar();
+  });
+
+  formAvaliar.addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+    limparErro(modalAvaliarErro);
+    limparErro(erroAcao);
+
+    if (!filmeParaAvaliar) return;
+
+    const filme = filmeParaAvaliar;
+    const existente = filme.minha_avaliacao;
+    const nota = parseFloat(avaliarNota.value);
+    const comentario = avaliarComentario.value.trim();
+
+    if (!nota || nota < 1 || nota > 10) {
+      exibirErro(modalAvaliarErro, 'A nota deve ser entre 1 e 10.');
+      return;
+    }
+
+    modalAvaliarSalvar.disabled = true;
+    modalAvaliarSalvar.textContent = 'Salvando...';
+
+    let salvou = false;
+
+    try {
+      if (existente) {
+        await AvaliacoesAPI.editar(existente.id_avaliacao, nota, comentario || null);
+      } else {
+        await AvaliacoesAPI.criar(filme.id_filme, nota, comentario || null);
+      }
+      salvou = true;
+    } catch (err) {
+      exibirErro(modalAvaliarErro, err.message);
+    } finally {
+      modalAvaliarSalvar.disabled = false;
+      modalAvaliarSalvar.textContent = existente ? 'Salvar alterações' : 'Salvar avaliação';
+    }
+
+    if (salvou) await finalizarAvaliacao();
+  });
+
+  // Remover a avaliação (confirmação em dois cliques): o filme volta para "para assistir"
+  modalAvaliarRemover.addEventListener('click', async () => {
+    if (!filmeParaAvaliar || !filmeParaAvaliar.minha_avaliacao) return;
+
+    if (!confirmandoRemocaoAvaliacao) {
+      confirmandoRemocaoAvaliacao = true;
+      modalAvaliarRemover.textContent = 'Clique de novo para confirmar';
+      return;
+    }
+
+    limparErro(modalAvaliarErro);
+    limparErro(erroAcao);
+    modalAvaliarRemover.disabled = true;
+    modalAvaliarRemover.textContent = 'Removendo...';
+
+    let removeu = false;
+
+    try {
+      await AvaliacoesAPI.deletar(filmeParaAvaliar.minha_avaliacao.id_avaliacao);
+      removeu = true;
+    } catch (err) {
+      exibirErro(modalAvaliarErro, err.message);
+      restaurarBotaoRemoverAvaliacao();
+    } finally {
+      modalAvaliarRemover.disabled = false;
+    }
+
+    if (removeu) await finalizarAvaliacao();
+  });
 
   // ----------------------------------------
   // Remover filme da lista

@@ -27,6 +27,14 @@ async function apiRequest(endpoint, options = {}) {
   const temCorpo = resposta.status !== 204;
   const dados = temCorpo ? await resposta.json().catch(() => ({})) : {};
 
+  // Sessão derrubada (senha trocada em outro dispositivo, conta excluída ou token expirado):
+  // limpa a sessão local e leva para o login. As rotas /auth/ ficam de fora, porque lá o 401
+  // significa "email ou senha inválidos", e não "sessão encerrada".
+  if (resposta.status === 401 && token && !endpoint.startsWith("/auth/")) {
+    if (typeof Auth !== "undefined") Auth.logout();
+    throw new Error(dados.error || "Sua sessão expirou. Faça login novamente.");
+  }
+
   if (!resposta.ok) {
     const erro = new Error(dados.error || "Ocorreu um erro na requisição.");
     Object.assign(erro, dados);
@@ -159,11 +167,6 @@ const ListasAPI = {
   removerFilme: (id_lista, id_filme) =>
     apiRequest(`/listas/${id_lista}/filmes/${id_filme}`, { method: "DELETE" }),
 
-  marcarAssistido: (id_lista, id_filme, is_assistido) =>
-    apiRequest(`/listas/${id_lista}/filmes/${id_filme}/assistido`, {
-      method: "PUT",
-      body: JSON.stringify({ is_assistido }),
-    }),
 };
 
 // ----------------------------------------
