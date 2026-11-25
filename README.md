@@ -194,7 +194,7 @@ Páginas protegidas verificam a sessão **antes** da renderização visual atrav
 
 ## Funcionalidades
 
-### 🔐 Autenticação e Segurança
+### Autenticação e Segurança
 - Cadastro com verificação de email via código OTP de 6 dígitos.
 - Inputs OTP com avanço automático, backspace inteligente, navegação por setas e suporte a colar código completo.
 - Login com bloqueio inteligente de contas não verificadas e redirecionamento direto para a tela de confirmação.
