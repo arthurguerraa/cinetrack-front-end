@@ -201,18 +201,18 @@ Páginas protegidas verificam a sessão **antes** da renderização visual atrav
 - Recuperação de senha com código por e-mail e redefinição com renovação de sessão imediata.
 - Versionamento de tokens e invalidação de sessão automática no caso de alteração de credenciais.
 
-### 🎬 Busca e Descoberta de Filmes
+### Busca e Descoberta de Filmes
 - Três modos de navegação na home: filmes populares na semana, filtro dinâmico por gêneros e busca textual por título.
 - **Ordenação flexível**: ordene por nota (maior/menor), ano de lançamento (recentes/antigos) ou relevância.
 - Filtro automático contra filmes que ainda não estrearam nos cinemas.
 - Paginação completa integrada ao histórico do navegador.
 
-### ⭐ Avaliações
+### Avaliações
 - Avalie filmes com nota de 1 a 10 (passo 0.5) e comentários opcionais.
 - Modais de avaliação rápida integrados na home, na página de detalhes da lista e no perfil.
 - Edição e exclusão de avaliações a qualquer momento com recálculo automático da nota.
 
-### 📋 Listas Interativas e Página Dedicada (`lista-detalhe`)
+### Listas Interativas e Página Dedicada (`lista-detalhe`)
 - Listas agora possuem **página própria completa** com cabeçalho estilizado de ticket de cinema.
 - **Barra de progresso de filmes assistidos**: o ato de avaliar um filme na plataforma o marca automaticamente como assistido dentro da sua lista.
 - **Filtros rápidos de visualização**: alterne entre "Todos", "Pendentes" e "Assistidos".
@@ -221,20 +221,20 @@ Páginas protegidas verificam a sessão **antes** da renderização visual atrav
 - **"Sortear um filme"**: recurso interativo que escolhe aleatoriamente um título não assistido da lista para ajudar na decisão do que ver.
 - Adição de filmes a partir de qualquer card da home, edição de informações da lista (nome, descrição, visibilidade pública/privada) e remoção direta de filmes.
 
-### 👤 Perfil Completo do Usuário
+### Perfil Completo do Usuário
 - **Foto de perfil personalizada**: upload de imagens (JPEG, PNG, WebP) com preview em tempo real, armazenamento e remoção (com fallback automático para avatar com as iniciais do nome).
 - **Bio do usuário**: campo de biografia personalizável com contador de caracteres (limite de 160).
 - Data de criação da conta ("Membro desde").
 - **Resumo de listas**: cards clicáveis com atalho direto e contagem de filmes de cada lista criada.
 - **Histórico de avaliações paginado**: listagem com ordenação por data, nota e título, com botão "Carregar mais".
 
-### ⚙️ Central de Configurações da Conta
+### Central de Configurações da Conta
 - Alteração do nome de exibição.
 - Alteração de senha com confirmação obrigatória da senha anterior.
 - Troca segura de e-mail em duas etapas (envio e confirmação de código OTP no novo endereço).
 - Zona de perigo: exclusão permanente da conta e de todos os dados vinculados, protegida por senha.
 
-### 🏆 Ranking Comunitário
+### Ranking Comunitário
 - Classificação dos filmes mais bem avaliados pela comunidade CineTrack.
 - Destaque visual especial para o pódio (top 3 em âmbar).
 - Seletor de limite para visualizar os top 10, 25 ou 50 títulos.
